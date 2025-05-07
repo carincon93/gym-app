@@ -1,0 +1,348 @@
+import { useEffect, useRef, useState } from "react";
+import * as rive from "@rive-app/canvas";
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { machines } from "@/data/data";
+
+type Record = {
+  id: number;
+  reps: number;
+  rest: number;
+  weight: number;
+  machineId: number;
+};
+
+type Machine = {
+  id: number;
+  image: string;
+};
+
+export default function BodyCanvas() {
+  const [elementClicked, setElementClicked] = useState<string>("");
+  const [machineSelected, setMachineSelected] = useState<Machine>();
+  const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const [records, setRecords] = useState<Record[]>([]);
+  const [srcRive, setSrcRive] = useState<string>("");
+
+  const riveRef = useRef<rive.Rive | null>(null);
+
+  // Función para crear instancias de animaciones Rive
+  const createRiveInstance = (canvasId: string) => {
+    const canvasElement: HTMLCanvasElement | null = document.getElementById(
+      canvasId
+    ) as HTMLCanvasElement | null;
+
+    if (!canvasElement) {
+      console.error(`Canvas with id "${canvasId}" not found.`);
+      return;
+    }
+
+    try {
+      const instance = new rive.Rive({
+        canvas: canvasElement,
+        autoplay: true,
+        stateMachines: "State Machine 1",
+        src: srcRive,
+        onStateChange: (e) => {
+          const name = Array.isArray(e?.data) ? e.data[0] : "";
+          setElementClicked(name);
+
+          if (!name.includes("Initial")) {
+            setOpenDrawer(true);
+          }
+        },
+      });
+
+      riveRef.current = instance;
+    } catch (error) {
+      console.error(
+        `Error initializing Rive animation for ${canvasId}:`,
+        error
+      );
+    }
+  };
+
+  const triggerZoomOut = () => {
+    const riveInstance = riveRef.current;
+    if (!riveInstance) return;
+
+    const inputs = riveInstance.stateMachineInputs("State Machine 1");
+    const zoomOutInput = inputs.find((input) => input.name === "ClickZoomOut");
+
+    if (zoomOutInput && zoomOutInput?.type.toString() === "58") {
+      zoomOutInput.fire();
+    }
+  };
+
+  const handleMachineSelected = (machine: Machine) => {
+    setMachineSelected(machine);
+    getRecords(machine).then(setRecords);
+    setOpenMachineDrawer(true);
+  };
+
+  useEffect(() => {
+    if (!srcRive) return;
+
+    setTimeout(() => {
+      createRiveInstance("canvas-gym");
+    }, 500);
+  }, [srcRive]);
+
+  useEffect(() => {
+    if (!openDrawer) {
+      triggerZoomOut();
+      setOpenDrawer(false);
+    }
+  }, [openDrawer]);
+
+  const DB_NAME = "GymDB";
+  const STORE_NAME = "records";
+  const DB_VERSION = 1;
+
+  const openDB = (): Promise<IDBDatabase> => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+        }
+      };
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  };
+
+  const getRecords = async (machine: Machine): Promise<Record[]> => {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const transaction = db.transaction(STORE_NAME, "readonly");
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.getAll();
+      // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
+      request.onsuccess = () => {
+        const allRecords = request.result;
+        const filteredRecords = allRecords
+          .filter((record) => record.machineId === machine?.id)
+          .slice(0, 10);
+        resolve(filteredRecords);
+      };
+    });
+  };
+
+  const addRecord = async (record: Record) => {
+    const db = await openDB();
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    store.add(record);
+  };
+
+  const updateRecord = async (record: Record) => {
+    const db = await openDB();
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    store.put(record);
+  };
+
+  const deleteRecord = async (record: Record) => {
+    const db = await openDB();
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    store.delete(record.id);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const record: Record = {
+      id: Date.now(),
+      reps: Number(formData.get("reps")),
+      rest: Number(formData.get("rest")),
+      weight: Number(formData.get("weight")),
+      machineId: machineSelected?.id || 0,
+    };
+
+    handleAddRecord(record);
+  };
+
+  const handleAddRecord = async (record: Record) => {
+    if (!record.machineId) return;
+
+    await addRecord(record);
+    // setRecords([...records, newRecord]);
+  };
+
+  return (
+    <div>
+      <Button onClick={() => setSrcRive("/gym-app/animations/frontbody.riv")}>
+        Front
+      </Button>
+      <Button onClick={() => setSrcRive("/gym-app/animations/backbody.riv")}>
+        Back
+      </Button>
+
+      <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">
+            {elementClicked}
+            <ul className="h-[250px] overflow-y-scroll space-y-2">
+              {Object.entries(machines)
+                .filter(([key]) =>
+                  elementClicked.toLowerCase().includes(key.toLowerCase())
+                )
+                .flatMap(([key, machineList]) =>
+                  machineList.map((machine: Machine) => (
+                    <li
+                      key={machine.id}
+                      className="rounded-md p-2 border flex items-center space-x-4"
+                      onClick={() => handleMachineSelected(machine)}
+                    >
+                      <img
+                        src={machine.image}
+                        alt={`Machine ${machine.id}`}
+                        className="bg-slate-100 rounded-md size-20 object-contain"
+                      />
+                      <h6>
+                        {key} {machine.id}
+                      </h6>
+                    </li>
+                  ))
+                )}
+            </ul>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      <Drawer open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle asChild>
+              <div className="rounded-md p-2 border flex items-center space-x-4 mb-6">
+                <img
+                  src={machineSelected?.image}
+                  alt={`Machine ${machineSelected?.id}`}
+                  className="bg-slate-100 rounded-md size-16 object-contain"
+                />
+                <h6>{machineSelected?.id}</h6>
+              </div>
+            </DrawerTitle>
+            <DrawerDescription asChild>
+              <div>
+                <div className="flex space-x-1 items-end relative pl-4">
+                  <small
+                    className={`absolute -left-[14px] bottom-[26px] -rotate-90 ${
+                      records.length === 0 && "hidden"
+                    }`}
+                  >
+                    Weight
+                  </small>
+                  {records.map((record) => (
+                    <div key={`weight-${record.id}`}>
+                      <div
+                        className={`w-4 bg-amber-400 flex justify-center`}
+                        style={{ height: record.weight / 1.5 + "px" }}
+                      />
+                      <small className="block text-center">
+                        {record.weight}
+                      </small>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex space-x-1 items-end relative pl-4 mt-4">
+                  <small
+                    className={`absolute -left-[7px] bottom-[19px] -rotate-90 ${
+                      records.length === 0 && "hidden"
+                    }`}
+                  >
+                    Reps
+                  </small>
+                  {records.map((record) => (
+                    <div key={`rep-${record.id}`}>
+                      <div
+                        className={`w-4 bg-green-400 flex justify-center`}
+                        style={{ height: record.reps + "px" }}
+                      />
+                      <small className="block text-center">{record.reps}</small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4">
+            <form
+              id="machine-form"
+              className="space-x-2 grid grid-cols-3"
+              onSubmit={handleSubmit}
+            >
+              <fieldset>
+                <Label className="my-2 text-xs" htmlFor="reps">
+                  Reps *
+                </Label>
+                <Input name="reps" id="reps" type="number" min="0" required />
+              </fieldset>
+
+              <fieldset>
+                <Label className="my-2 text-xs" htmlFor="rest">
+                  Rest (Seconds) *
+                </Label>
+                <Input name="rest" id="rest" type="number" min="0" required />
+              </fieldset>
+
+              <fieldset>
+                <Label className="my-2 text-xs" htmlFor="weight">
+                  Weight (Kg) *
+                </Label>
+                <Input
+                  name="weight"
+                  id="weight"
+                  type="number"
+                  min="0"
+                  required
+                />
+              </fieldset>
+            </form>
+          </div>
+          <DrawerFooter>
+            <Button type="submit" form="machine-form">
+              Save
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
+      <canvas
+        className="mask-fade"
+        id="canvas-gym"
+        width="390"
+        height="844"
+      ></canvas>
+    </div>
+  );
+}
