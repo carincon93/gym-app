@@ -28,18 +28,21 @@ type Machine = {
   image: string;
 };
 
-export default function BodyCanvas() {
-  const [elementClicked, setElementClicked] = useState<string>("");
+type BodyCanvasProps = {
+  canvasId: string;
+};
+
+export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
+  const [muscleSelected, setMuscleSelected] = useState<string>("");
   const [machineSelected, setMachineSelected] = useState<Machine>();
   const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [records, setRecords] = useState<Record[]>([]);
-  const [srcRive, setSrcRive] = useState<string>("");
 
   const riveRef = useRef<rive.Rive | null>(null);
 
   // Función para crear instancias de animaciones Rive
-  const createRiveInstance = (canvasId: string) => {
+  const createRiveInstance = () => {
     const canvasElement: HTMLCanvasElement | null = document.getElementById(
       canvasId
     ) as HTMLCanvasElement | null;
@@ -54,10 +57,13 @@ export default function BodyCanvas() {
         canvas: canvasElement,
         autoplay: true,
         stateMachines: "State Machine 1",
-        src: srcRive,
+        src:
+          canvasId === "canvas-front-body"
+            ? "/gym-app/animations/front-body.riv"
+            : "/gym-app/animations/back-body.riv",
         onStateChange: (e) => {
           const name = Array.isArray(e?.data) ? e.data[0] : "";
-          setElementClicked(name);
+          setMuscleSelected(name);
 
           if (!name.includes("Initial")) {
             setOpenDrawer(true);
@@ -84,6 +90,8 @@ export default function BodyCanvas() {
     if (zoomOutInput && zoomOutInput?.type.toString() === "58") {
       zoomOutInput.fire();
     }
+
+    setMuscleSelected("");
   };
 
   const handleMachineSelected = (machine: Machine) => {
@@ -91,21 +99,6 @@ export default function BodyCanvas() {
     getRecords(machine).then(setRecords);
     setOpenMachineDrawer(true);
   };
-
-  useEffect(() => {
-    if (!srcRive) return;
-
-    setTimeout(() => {
-      createRiveInstance("canvas-gym");
-    }, 500);
-  }, [srcRive]);
-
-  useEffect(() => {
-    if (!openDrawer) {
-      triggerZoomOut();
-      setOpenDrawer(false);
-    }
-  }, [openDrawer]);
 
   const DB_NAME = "GymDB";
   const STORE_NAME = "records";
@@ -154,20 +147,6 @@ export default function BodyCanvas() {
     store.add(record);
   };
 
-  const updateRecord = async (record: Record) => {
-    const db = await openDB();
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    store.put(record);
-  };
-
-  const deleteRecord = async (record: Record) => {
-    const db = await openDB();
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    store.delete(record.id);
-  };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
@@ -191,26 +170,32 @@ export default function BodyCanvas() {
     // setRecords([...records, newRecord]);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      createRiveInstance();
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    if (!openDrawer) {
+      triggerZoomOut();
+      setOpenDrawer(false);
+    }
+  }, [openDrawer]);
+
   return (
     <div>
-      <Button onClick={() => setSrcRive("/gym-app/animations/frontbody.riv")}>
-        Front
-      </Button>
-      <Button onClick={() => setSrcRive("/gym-app/animations/backbody.riv")}>
-        Back
-      </Button>
-
       <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Are you absolutely sure?</DrawerTitle>
           </DrawerHeader>
           <div className="p-4">
-            {elementClicked}
+            {muscleSelected}
             <ul className="h-[250px] overflow-y-scroll space-y-2">
               {Object.entries(machines)
                 .filter(([key]) =>
-                  elementClicked.toLowerCase().includes(key.toLowerCase())
+                  muscleSelected.toLowerCase().includes(key.toLowerCase())
                 )
                 .flatMap(([key, machineList]) =>
                   machineList.map((machine: Machine) => (
@@ -234,7 +219,6 @@ export default function BodyCanvas() {
           </div>
         </DrawerContent>
       </Drawer>
-
       <Drawer open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
         <DrawerContent>
           <DrawerHeader>
@@ -337,12 +321,14 @@ export default function BodyCanvas() {
         </DrawerContent>
       </Drawer>
 
-      <canvas
-        className="mask-fade"
-        id="canvas-gym"
-        width="390"
-        height="844"
-      ></canvas>
+      <div className="flex flex-col justify-center items-center">
+        <canvas
+          className="mask-fade"
+          id="canvas-front-body"
+          width="390"
+          height="844"
+        />
+      </div>
     </div>
   );
 }
