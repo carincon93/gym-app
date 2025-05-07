@@ -186,7 +186,10 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   }, [openDrawer]);
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      id={canvasId === "canvas-front-body" ? "front" : "back"}
+    >
       <h1 className="absolute top-0 text-left font-bold text-9xl left-0 right-0 mx-auto z-10 opacity-60 break-all leading-[0.7]">
         {muscleSelected
           ? muscleSelected
