@@ -26,7 +26,7 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/gym-app/index.html",
-        globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
+        globPatterns: ["**/*.{css,js,html,svg,png,webp,ico,txt}"],
       },
       devOptions: {
         enabled: true,
