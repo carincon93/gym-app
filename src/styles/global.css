@@ -143,3 +143,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+.rotate-hide {
+  animation: rotateY190 4s forwards;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+@keyframes rotateY190 {
+  0% {
+    transform: rotateY(0deg);
+    /* opacity: 1; */
+  }
+  100% {
+    transform: rotateY(190deg);
+    /* opacity: 0; */
+  }
+}

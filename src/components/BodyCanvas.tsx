@@ -63,6 +63,8 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             : "/gym-app/animations/back-body.riv",
         onStateChange: (e) => {
           const name = Array.isArray(e?.data) ? e.data[0] : "";
+          if (name.includes("Initial")) return;
+
           setMuscleSelected(name);
 
           if (!name.includes("Initial")) {
@@ -132,9 +134,9 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
       // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
       request.onsuccess = () => {
         const allRecords = request.result;
-        const filteredRecords = allRecords
-          .filter((record) => record.machineId === machine?.id)
-          .slice(0, 10);
+        const filteredRecords = allRecords.filter(
+          (record) => record.machineId === machine?.id
+        );
         resolve(filteredRecords);
       };
     });
@@ -163,11 +165,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     handleAddRecord(record);
   };
 
-  const handleAddRecord = async (record: Record) => {
-    if (!record.machineId) return;
+  const handleAddRecord = async (newRecord: Record) => {
+    if (!newRecord.machineId) return;
 
-    await addRecord(record);
-    // setRecords([...records, newRecord]);
+    await addRecord(newRecord);
+    setRecords([...records, newRecord]);
   };
 
   useEffect(() => {
@@ -184,14 +186,20 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   }, [openDrawer]);
 
   return (
-    <div>
+    <div className="relative">
+      <h1 className="sticky top-0 text-left font-bold text-9xl left-0 right-0 mx-auto z-10 opacity-60 break-all leading-[0.7]">
+        {muscleSelected
+          ? muscleSelected
+          : canvasId === "canvas-front-body"
+          ? "Front"
+          : "Back"}
+      </h1>
       <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+            <DrawerTitle>Select a machine or an exercise:</DrawerTitle>
           </DrawerHeader>
           <div className="p-4">
-            {muscleSelected}
             <ul className="h-[250px] overflow-y-scroll space-y-2">
               {Object.entries(machines)
                 .filter(([key]) =>
@@ -234,44 +242,50 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             </DrawerTitle>
             <DrawerDescription asChild>
               <div>
-                <div className="flex space-x-1 items-end relative pl-4">
+                <div className="relative">
                   <small
-                    className={`absolute -left-[14px] bottom-[26px] -rotate-90 ${
+                    className={`absolute -left-[17px] bottom-[26px] -rotate-90 ${
                       records.length === 0 && "hidden"
                     }`}
                   >
-                    Weight
+                    Weight (Kg)
                   </small>
-                  {records.map((record) => (
-                    <div key={`weight-${record.id}`}>
-                      <div
-                        className={`w-4 bg-amber-400 flex justify-center`}
-                        style={{ height: record.weight / 1.5 + "px" }}
-                      />
-                      <small className="block text-center">
-                        {record.weight}
-                      </small>
-                    </div>
-                  ))}
+                  <div className="flex space-x-1 items-end justify-center pl-4">
+                    {records.slice(-10).map((record) => (
+                      <div key={`weight-${record.id}`}>
+                        <div
+                          className={`w-4 bg-amber-400 flex justify-center`}
+                          style={{ height: record.weight / 1.5 + "px" }}
+                        />
+                        <small className="block text-center">
+                          {record.weight}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex space-x-1 items-end relative pl-4 mt-4">
+                <div className="relative">
                   <small
-                    className={`absolute -left-[7px] bottom-[19px] -rotate-90 ${
+                    className={`absolute bottom-[19px] -rotate-90 ${
                       records.length === 0 && "hidden"
                     }`}
                   >
                     Reps
                   </small>
-                  {records.map((record) => (
-                    <div key={`rep-${record.id}`}>
-                      <div
-                        className={`w-4 bg-green-400 flex justify-center`}
-                        style={{ height: record.reps + "px" }}
-                      />
-                      <small className="block text-center">{record.reps}</small>
-                    </div>
-                  ))}
+                  <div className="flex space-x-1 items-end justify-center pl-4 mt-4">
+                    {records.slice(-10).map((record) => (
+                      <div key={`rep-${record.id}`}>
+                        <div
+                          className={`w-4 bg-green-400 flex justify-center`}
+                          style={{ height: record.reps + "px" }}
+                        />
+                        <small className="block text-center">
+                          {record.reps}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </DrawerDescription>
@@ -322,12 +336,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
       </Drawer>
 
       <div className="flex flex-col justify-center items-center">
-        <canvas
-          className="mask-fade"
-          id="canvas-front-body"
-          width="390"
-          height="844"
-        />
+        <canvas className="mask-fade" id={canvasId} width="390" height="844" />
       </div>
     </div>
   );
