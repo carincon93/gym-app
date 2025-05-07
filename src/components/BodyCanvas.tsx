@@ -25,6 +25,7 @@ type Record = {
 
 type Machine = {
   id: number;
+  name: string;
   image: string;
 };
 
@@ -221,7 +222,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                         className="bg-slate-100 rounded-md size-20 object-contain"
                       />
                       <h6>
-                        {key} {machine.id}
+                        {machine.name}
                       </h6>
                     </li>
                   ))
