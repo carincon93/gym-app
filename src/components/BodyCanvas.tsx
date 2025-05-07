@@ -241,7 +241,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   alt={`Machine ${machineSelected?.id}`}
                   className="bg-slate-100 rounded-md size-16 object-contain"
                 />
-                <h6>{machineSelected?.id}</h6>
+                <h6>{machineSelected?.name}</h6>
               </div>
             </DrawerTitle>
             <DrawerDescription asChild>
