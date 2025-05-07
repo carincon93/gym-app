@@ -187,7 +187,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
   return (
     <div className="relative">
-      <h1 className="sticky top-0 text-left font-bold text-9xl left-0 right-0 mx-auto z-10 opacity-60 break-all leading-[0.7]">
+      <h1 className="absolute top-0 text-left font-bold text-9xl left-0 right-0 mx-auto z-10 opacity-60 break-all leading-[0.7]">
         {muscleSelected
           ? muscleSelected
           : canvasId === "canvas-front-body"
