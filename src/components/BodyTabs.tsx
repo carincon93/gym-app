@@ -16,12 +16,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
-import type { MaxGymTime } from "@/lib/types";
+import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
 import { Database, Play } from "lucide-react";
-import { addWeek } from "@/services/week.service";
+import { addWeek, getWeek } from "@/services/week.service";
 
 export const BodyTabs = () => {
+  const [week, setWeek] = useState<Week>();
   const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
@@ -39,6 +40,7 @@ export const BodyTabs = () => {
   };
 
   useEffect(() => {
+    getWeek().then(setWeek);
     getMaxGymTime().then(setMaxGymTime);
   }, []);
 
@@ -72,9 +74,14 @@ export const BodyTabs = () => {
       </AlertDialog>
 
       <div className="fixed bottom-8 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
-        <small className="mx-auto px-4">
+        <small className="mx-auto px-4 text-slate-500">
           <strong>Max hour: </strong>
           {maxGymTime?.maxTime?.toString()}
+        </small>
+
+        <small className="mx-auto px-4 text-slate-500">
+          <strong>Week: </strong>
+          {week?.firstDayOfWeek?.toString()}
         </small>
         <Button onClick={handleAddMaxTime} className=" mx-auto">
           Start session
