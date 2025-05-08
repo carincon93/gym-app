@@ -49,7 +49,7 @@ export const BodyTabs = () => {
 
   return (
     <div>
-      <div className="fixed px-2 w-full left-0 bottom-32 z-20 flex items-center justify-between">
+      <div className="fixed px-2 w-full left-0 bottom-16 z-20 flex items-center justify-between">
         <Button onClick={() => setOpenDialog(true)} variant="destructive">
           <Database />
           <span className="-translate-x-1 font-black">X</span>
