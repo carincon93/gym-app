@@ -13,18 +13,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database, Play } from "lucide-react";
+import { Database, Info, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 
 export const BodyTabs = () => {
   const [week, setWeek] = useState<Week>();
   const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openInfoDialog, setOpenInfoDialog] = useState<boolean>(false);
 
   const handleAddMaxTime = async () => {
     await addMaxGymTime();
@@ -49,14 +49,24 @@ export const BodyTabs = () => {
 
   return (
     <div>
-      <Button
-        className="fixed bottom-32 left-4 z-20"
-        onClick={() => setOpenDialog(true)}
-        variant="destructive"
-      >
-        <Database />
-        <span className="-translate-x-1 font-black">X</span>
-      </Button>
+      <div className="fixed px-2 w-full left-0 bottom-32 z-20 flex items-center justify-between">
+        <Button onClick={() => setOpenDialog(true)} variant="destructive">
+          <Database />
+          <span className="-translate-x-1 font-black">X</span>
+        </Button>
+
+        <Button onClick={handleAddMaxTime}>
+          <Play /> Session
+        </Button>
+
+        <Button onClick={handleWeek}>
+          <Play /> Week
+        </Button>
+
+        <Button onClick={() => setOpenInfoDialog(true)}>
+          <Info />
+        </Button>
+      </div>
 
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
         <AlertDialogContent>
@@ -76,35 +86,35 @@ export const BodyTabs = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="fixed bottom-32 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
-        <Button onClick={handleAddMaxTime} className=" mx-auto">
-          Start session
-        </Button>
-      </div>
+      <AlertDialog open={openInfoDialog} onOpenChange={setOpenInfoDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Info</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div className="text-slate-500">
+                <strong>Max hour: </strong>
+                {maxGymTime?.maxTime?.toString()}
+              </div>
 
-      <div className="fixed bottom-32 right-4 flex items-center justify-center space-y-2 flex-col z-10">
-        <Button onClick={handleWeek} className=" mx-auto">
-          <Play /> Week
-        </Button>
-      </div>
+              <div className="text-slate-500 mt-2">
+                <strong>Week: </strong>
+                {week?.firstDayOfWeek && (
+                  <>
+                    {week?.firstDayOfWeek?.toString() +
+                      " to " +
+                      week?.lastDayOfWeek?.toString()}
+                  </>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <div className="fixed bottom-4 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
-        <small className="mx-auto px-4 text-slate-500">
-          <strong>Max hour: </strong>
-          {maxGymTime?.maxTime?.toString()}
-        </small>
-
-        <small className="mx-auto px-4 text-slate-500">
-          <strong>Week: </strong>
-          {week?.firstDayOfWeek && (
-            <>
-              {week?.firstDayOfWeek?.toString() +
-                " to " +
-                week?.lastDayOfWeek?.toString()}
-            </>
-          )}
-        </small>
-      </div>
+      <div className="fixed bottom-4 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10"></div>
 
       <Tabs defaultValue="front">
         <TabsList>
