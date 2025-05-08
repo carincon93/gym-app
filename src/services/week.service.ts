@@ -23,6 +23,7 @@ export const addWeek = async () => {
 
   const timestamp = Date.now();
   const firstDayOfWeek = new Date(timestamp);
+  const lastDayOfWeek = new Date(timestamp + 604800000);
 
-  store.add({ firstDayOfWeek: firstDayOfWeek });
+  store.add({ firstDayOfWeek: firstDayOfWeek, lastDayOfWeek: lastDayOfWeek });
 };

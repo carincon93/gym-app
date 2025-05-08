@@ -15,10 +15,11 @@ export type Machine = {
 export type MaxGymTime = {
   id: number;
   startTime: number;
-  maxTime: number;
+  maxTime: Object;
 };
 
 export type Week = {
   id: number;
-  firstDayOfWeek: number;
+  firstDayOfWeek: Object;
+  lastDayOfWeek: Object;
 };

@@ -33,6 +33,8 @@ export const BodyTabs = () => {
 
   const handleRemoveDb = async () => {
     await deleteDB();
+    getWeek().then(setWeek);
+    getMaxGymTime().then(setMaxGymTime);
   };
 
   const handleWeek = async () => {
@@ -48,7 +50,7 @@ export const BodyTabs = () => {
   return (
     <div>
       <Button
-        className="fixed bottom-4 left-4 z-20"
+        className="fixed bottom-32 left-4 z-20"
         onClick={() => setOpenDialog(true)}
         variant="destructive"
       >
@@ -74,6 +76,18 @@ export const BodyTabs = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      <div className="fixed bottom-32 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
+        <Button onClick={handleAddMaxTime} className=" mx-auto">
+          Start session
+        </Button>
+      </div>
+
+      <div className="fixed bottom-32 right-4 flex items-center justify-center space-y-2 flex-col z-10">
+        <Button onClick={handleWeek} className=" mx-auto">
+          <Play /> Week
+        </Button>
+      </div>
+
       <div className="fixed bottom-4 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
         <small className="mx-auto px-4 text-slate-500">
           <strong>Max hour: </strong>
@@ -82,17 +96,14 @@ export const BodyTabs = () => {
 
         <small className="mx-auto px-4 text-slate-500">
           <strong>Week: </strong>
-          {week?.firstDayOfWeek?.toString()}
+          {week?.firstDayOfWeek && (
+            <>
+              {week?.firstDayOfWeek?.toString() +
+                " to " +
+                week?.lastDayOfWeek?.toString()}
+            </>
+          )}
         </small>
-        <Button onClick={handleAddMaxTime} className=" mx-auto">
-          Start session
-        </Button>
-      </div>
-
-      <div className="fixed bottom-4 right-4 flex items-center justify-center space-y-2 flex-col z-10">
-        <Button onClick={handleWeek} className=" mx-auto">
-          <Play /> Week
-        </Button>
       </div>
 
       <Tabs defaultValue="front">
