@@ -117,6 +117,8 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     setRecords([...records, newRecord]);
   };
 
+
+
   useEffect(() => {
     setTimeout(() => {
       createRiveInstance();

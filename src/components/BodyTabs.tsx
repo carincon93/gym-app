@@ -4,15 +4,33 @@ import Front from "@/assets/front.svg";
 import Back from "@/assets/back.svg";
 import { addMaxGymTime, getMaxGymTime } from "@/services/maxtime.service";
 import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import type { MaxGymTime } from "@/lib/types";
+import { deleteDB } from "@/services/connection.service";
+import { Database } from "lucide-react";
 
 export const BodyTabs = () => {
   const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const handleAddMaxTime = async () => {
     await addMaxGymTime();
     getMaxGymTime().then(setMaxGymTime);
+  };
+
+  const handleRemoveDb = async () => {
+    await deleteDB();
   };
 
   useEffect(() => {
@@ -21,6 +39,33 @@ export const BodyTabs = () => {
 
   return (
     <div>
+      <Button
+        className="fixed bottom-8 left-4 z-20"
+        onClick={() => setOpenDialog(true)}
+        variant="destructive"
+      >
+        <Database />
+        <span className="-translate-x-1 font-black">X</span>
+      </Button>
+
+      <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              database and all your training data will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction color="red" onClick={handleRemoveDb}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="fixed bottom-8 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
         <small className="mx-auto px-4">
           <strong>Max hour: </strong>

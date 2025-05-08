@@ -24,3 +24,28 @@ export const openDB = (STORE_NAME: string): Promise<IDBDatabase> => {
     request.onerror = () => reject(request.error);
   });
 };
+
+export const deleteDB = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+
+    deleteRequest.onsuccess = () => {
+      console.log(`✅ Base de datos "${DB_NAME}" eliminada correctamente.`);
+      resolve();
+    };
+
+    deleteRequest.onerror = () => {
+      console.error(
+        `❌ Error al eliminar la base de datos "${DB_NAME}":`,
+        deleteRequest.error
+      );
+      reject(deleteRequest.error);
+    };
+
+    deleteRequest.onblocked = () => {
+      console.warn(
+        `⚠️ La eliminación de la base de datos "${DB_NAME}" fue bloqueada.`
+      );
+    };
+  });
+};
