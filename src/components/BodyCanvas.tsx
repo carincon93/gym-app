@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as rive from "@rive-app/canvas";
+import { Play, Square } from "lucide-react";
 
 import {
   Drawer,
@@ -14,20 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { machines } from "@/data/data";
-
-type Record = {
-  id: number;
-  reps: number;
-  rest: number;
-  weight: number;
-  machineId: number;
-};
-
-type Machine = {
-  id: number;
-  name: string;
-  image: string;
-};
+import { addRecord, getRecords } from "@/services/records.service";
+import type { Machine, Record } from "@/lib/types";
 
 type BodyCanvasProps = {
   canvasId: string;
@@ -38,7 +27,9 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const [machineSelected, setMachineSelected] = useState<Machine>();
   const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const [startTime, setStartTime] = useState<number>();
   const [records, setRecords] = useState<Record[]>([]);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   const riveRef = useRef<rive.Rive | null>(null);
 
@@ -103,53 +94,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     setOpenMachineDrawer(true);
   };
 
-  const DB_NAME = "GymDB";
-  const STORE_NAME = "records";
-  const DB_VERSION = 1;
-
-  const openDB = (): Promise<IDBDatabase> => {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME, {
-            keyPath: "id",
-            autoIncrement: true,
-          });
-        }
-      };
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  };
-
-  const getRecords = async (machine: Machine): Promise<Record[]> => {
-    const db = await openDB();
-    return new Promise((resolve) => {
-      const transaction = db.transaction(STORE_NAME, "readonly");
-      const store = transaction.objectStore(STORE_NAME);
-      const request = store.getAll();
-      // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
-      request.onsuccess = () => {
-        const allRecords = request.result;
-        const filteredRecords = allRecords.filter(
-          (record) => record.machineId === machine?.id
-        );
-        resolve(filteredRecords);
-      };
-    });
-  };
-
-  const addRecord = async (record: Record) => {
-    const db = await openDB();
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    store.add(record);
-  };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
@@ -158,7 +102,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     const record: Record = {
       id: Date.now(),
       reps: Number(formData.get("reps")),
-      rest: Number(formData.get("rest")),
+      rest: elapsedTime,
       weight: Number(formData.get("weight")),
       machineId: machineSelected?.id || 0,
     };
@@ -174,12 +118,24 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   };
 
   useEffect(() => {
-    console.log("loaded");
-
     setTimeout(() => {
       createRiveInstance();
     }, 500);
   }, []);
+
+  useEffect(() => {
+    if (!startTime) return;
+
+    const updateElapsedTime = () => {
+      setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // In seconds
+    };
+
+    updateElapsedTime(); // Calculate when the page has loaded
+
+    const interval = setInterval(updateElapsedTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
 
   useEffect(() => {
     if (!openDrawer) {
@@ -189,46 +145,55 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   }, [openDrawer]);
 
   return (
-      <div
-        className="relative -translate-y-20"
-        id={canvasId === "canvas-front-body" ? "front" : "back"}
-      >
-        <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Select a machine or an exercise:</DrawerTitle>
-            </DrawerHeader>
-            <div className="p-4">
-              <ul className="h-[250px] overflow-y-scroll space-y-2">
-                {Object.entries(machines)
-                  .filter(([key]) =>
-                    muscleSelected.toLowerCase().includes(key.toLowerCase())
-                  )
-                  .flatMap(([key, machineList]) =>
-                    machineList.map((machine: Machine) => (
-                      <li
-                        key={machine.id}
-                        className="rounded-md p-2 border flex items-center space-x-4"
-                        onClick={() => handleMachineSelected(machine)}
-                      >
-                        <img
-                          src={machine.image}
-                          alt={`Machine ${machine.id}`}
-                          className="bg-slate-100 rounded-md size-20 object-contain"
-                        />
-                        <h6>{machine.name}</h6>
-                      </li>
-                    ))
-                  )}
-              </ul>
-            </div>
-          </DrawerContent>
-        </Drawer>
-        <Drawer open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle asChild>
-                <div className="rounded-md p-2 border flex items-center space-x-4 mb-6">
+    <div
+      className="relative -translate-y-20"
+      id={canvasId === "canvas-front-body" ? "front" : "back"}
+    >
+      <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Select a machine or an exercise:</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">
+            <ul className="h-[250px] overflow-y-scroll space-y-2">
+              {Object.entries(machines)
+                .filter(([key]) =>
+                  muscleSelected.toLowerCase().includes(key.toLowerCase())
+                )
+                .flatMap(([key, machineList]) =>
+                  machineList.map((machine: Machine) => (
+                    <li
+                      key={machine.id}
+                      className="rounded-md p-2 border flex items-center space-x-4"
+                      onClick={() => handleMachineSelected(machine)}
+                    >
+                      <img
+                        src={machine.image}
+                        alt={`Machine ${machine.id}`}
+                        className="bg-slate-100 rounded-md size-20 object-contain"
+                      />
+                      <h6>{machine.name}</h6>
+                    </li>
+                  ))
+                )}
+            </ul>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      <Drawer open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle asChild>
+              <div className="rounded-md p-2 border mb-6 relative">
+                <span
+                  className={`absolute text-6xl text-center h-full w-full ${
+                    startTime === 0 || elapsedTime === 0 ? "hidden" : "flex"
+                  } items-center justify-center bg-white top-0 left-0 right-0 mx-auto`}
+                >
+                  {elapsedTime}s
+                </span>
+                <div className="flex items-center space-x-4">
                   <img
                     src={machineSelected?.image}
                     alt={`Machine ${machineSelected?.id}`}
@@ -236,127 +201,118 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   />
                   <h6>{machineSelected?.name}</h6>
                 </div>
-              </DrawerTitle>
-              <DrawerDescription asChild>
-                <div>
-                  <div className="relative">
-                    <small
-                      className={`absolute left-0 bottom-[26px] ${
-                        records.length === 0 && "hidden"
-                      }`}
-                    >
-                      Weight (Kg)
-                    </small>
-                    <div className="flex space-x-1 items-end justify-center pl-4">
-                      {records.slice(-10).map((record) => (
-                        <div key={`weight-${record.id}`}>
-                          <div
-                            className={`w-4 bg-amber-400 flex justify-center`}
-                            style={{ height: record.weight / 1.5 + "px" }}
-                          />
-                          <small className="block text-center">
-                            {record.weight}
-                          </small>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <small
-                      className={`absolute bottom-[19px] ${
-                        records.length === 0 && "hidden"
-                      }`}
-                    >
-                      Reps
-                    </small>
-                    <div className="flex space-x-1 items-end justify-center pl-4 mt-4">
-                      {records.slice(-10).map((record) => (
-                        <div key={`rep-${record.id}`}>
-                          <div
-                            className={`w-4 bg-green-400 flex justify-center`}
-                            style={{ height: record.reps + "px" }}
-                          />
-                          <small className="block text-center">
-                            {record.reps}
-                          </small>
-                        </div>
-                      ))}
-                    </div>
+                <div className="flex items-center mt-2 z-10 relative">
+                  <div className="space-x-1 flex">
+                    <Button onClick={() => setStartTime(Date.now())}>
+                      <Play />
+                    </Button>
+                    <Button onClick={() => setStartTime(0)}>
+                      <Square />
+                    </Button>
                   </div>
                 </div>
-              </DrawerDescription>
-            </DrawerHeader>
-            <div className="px-4">
-              <form
-                id="machine-form"
-                className="space-x-2 grid grid-cols-3"
-                onSubmit={handleSubmit}
-              >
-                <fieldset>
-                  <Label className="my-2 text-xs" htmlFor="reps">
-                    Reps *
-                  </Label>
-                  <Input
-                    name="reps"
-                    id="reps"
-                    type="number"
-                    min="0"
-                    autoComplete="off"
-                    required
-                  />
-                </fieldset>
+              </div>
+            </DrawerTitle>
+            <DrawerDescription asChild>
+              <div>
+                <div className="relative">
+                  <small
+                    className={`absolute left-0 bottom-[26px] ${
+                      records.length === 0 && "hidden"
+                    }`}
+                  >
+                    Weight (Kg)
+                  </small>
+                  <div className="flex space-x-1 items-end justify-center pl-4">
+                    {records.slice(-10).map((record) => (
+                      <div key={`weight-${record.id}`}>
+                        <div
+                          className={`w-4 bg-amber-400 flex justify-center`}
+                          style={{ height: record.weight / 1.5 + "px" }}
+                        />
+                        <small className="block text-center">
+                          {record.weight}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-                <fieldset>
-                  <Label className="my-2 text-xs" htmlFor="rest">
-                    Rest (Seconds) *
-                  </Label>
-                  <Input
-                    name="rest"
-                    id="rest"
-                    type="number"
-                    min="0"
-                    autoComplete="off"
-                    required
-                  />
-                </fieldset>
+                <div className="relative">
+                  <small
+                    className={`absolute bottom-[19px] ${
+                      records.length === 0 && "hidden"
+                    }`}
+                  >
+                    Reps
+                  </small>
+                  <div className="flex space-x-1 items-end justify-center pl-4 mt-4">
+                    {records.slice(-10).map((record) => (
+                      <div key={`rep-${record.id}`}>
+                        <div
+                          className={`w-4 bg-green-400 flex justify-center`}
+                          style={{ height: record.reps + "px" }}
+                        />
+                        <small className="block text-center">
+                          {record.reps}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4">
+            <form
+              id="machine-form"
+              className="space-x-2 grid grid-cols-2"
+              onSubmit={handleSubmit}
+            >
+              <fieldset>
+                <Label className="my-2 text-xs" htmlFor="reps">
+                  Reps *
+                </Label>
+                <Input
+                  name="reps"
+                  id="reps"
+                  type="number"
+                  min="0"
+                  autoComplete="off"
+                  required
+                />
+              </fieldset>
 
-                <fieldset>
-                  <Label className="my-2 text-xs" htmlFor="weight">
-                    Weight (Kg) *
-                  </Label>
-                  <Input
-                    name="weight"
-                    id="weight"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    autoComplete="off"
-                    required
-                  />
-                </fieldset>
-              </form>
-            </div>
-            <DrawerFooter>
-              <Button type="submit" form="machine-form">
-                Save
-              </Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+              <fieldset>
+                <Label className="my-2 text-xs" htmlFor="weight">
+                  Weight (Kg) *
+                </Label>
+                <Input
+                  name="weight"
+                  id="weight"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  autoComplete="off"
+                  required
+                />
+              </fieldset>
+            </form>
+          </div>
+          <DrawerFooter>
+            <Button type="submit" form="machine-form">
+              Save
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
-        <div className="flex flex-col justify-center items-center">
-          <canvas
-            className="mask-fade"
-            id={canvasId}
-            width="390"
-            height="844"
-          />
-        </div>
+      <div className="flex flex-col justify-center items-center">
+        <canvas className="mask-fade" id={canvasId} width="390" height="844" />
       </div>
-
+    </div>
   );
 }
