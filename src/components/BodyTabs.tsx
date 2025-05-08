@@ -37,6 +37,7 @@ export const BodyTabs = () => {
 
   const handleWeek = async () => {
     await addWeek();
+    getWeek().then(setWeek);
   };
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export const BodyTabs = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="fixed bottom-8 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
+      <div className="fixed bottom-7 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
         <small className="mx-auto px-4 text-slate-500">
           <strong>Max hour: </strong>
           {maxGymTime?.maxTime?.toString()}
@@ -88,7 +89,7 @@ export const BodyTabs = () => {
         </Button>
       </div>
 
-      <div className="fixed bottom-8 right-4 flex items-center justify-center space-y-2 flex-col z-10">
+      <div className="fixed bottom-7 right-4 flex items-center justify-center space-y-2 flex-col z-10">
         <Button onClick={handleWeek} className=" mx-auto">
           <Play /> Week
         </Button>
