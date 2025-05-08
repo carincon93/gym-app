@@ -19,6 +19,7 @@ import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
 import { Database, Info, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
+import { toast } from "sonner";
 
 export const BodyTabs = () => {
   const [week, setWeek] = useState<Week>();
@@ -29,17 +30,23 @@ export const BodyTabs = () => {
   const handleAddMaxTime = async () => {
     await addMaxGymTime();
     getMaxGymTime().then(setMaxGymTime);
+
+    toast("New sessiona added.");
   };
 
   const handleRemoveDb = async () => {
     await deleteDB();
     getWeek().then(setWeek);
     getMaxGymTime().then(setMaxGymTime);
+
+    toast("DB deleted.");
   };
 
   const handleWeek = async () => {
     await addWeek();
     getWeek().then(setWeek);
+
+    toast("New week added.");
   };
 
   useEffect(() => {
@@ -90,7 +97,8 @@ export const BodyTabs = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Info</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription></AlertDialogDescription>
+            <div className="text-xs">
               <div className="text-slate-500">
                 <strong>Max hour: </strong>
                 {maxGymTime?.maxTime?.toString()}
@@ -106,7 +114,7 @@ export const BodyTabs = () => {
                   </>
                 )}
               </div>
-            </AlertDialogDescription>
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Close</AlertDialogCancel>
