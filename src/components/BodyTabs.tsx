@@ -48,7 +48,7 @@ export const BodyTabs = () => {
   return (
     <div>
       <Button
-        className="fixed bottom-8 left-4 z-20"
+        className="fixed bottom-6 left-4 z-20"
         onClick={() => setOpenDialog(true)}
         variant="destructive"
       >
@@ -74,7 +74,7 @@ export const BodyTabs = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="fixed bottom-7 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
+      <div className="fixed bottom-6 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10">
         <small className="mx-auto px-4 text-slate-500">
           <strong>Max hour: </strong>
           {maxGymTime?.maxTime?.toString()}
@@ -89,7 +89,7 @@ export const BodyTabs = () => {
         </Button>
       </div>
 
-      <div className="fixed bottom-7 right-4 flex items-center justify-center space-y-2 flex-col z-10">
+      <div className="fixed bottom-6 right-4 flex items-center justify-center space-y-2 flex-col z-10">
         <Button onClick={handleWeek} className=" mx-auto">
           <Play /> Week
         </Button>
