@@ -1,21 +1,15 @@
 ---
 import background from "@/assets/background.svg";
-import BodyCanvas from "./BodyCanvas";
-import Front from "@/assets/front.svg";
-import Back from "@/assets/back.svg";
+
+import { BodyTabs } from "./BodyTabs";
 ---
 
 <div id="container">
   <img id="background" src={background.src} alt="" fetchpriority="high" />
   <main>
-    <a href="#front" class="fixed z-10 bg-white shadow p-4 bottom-20 right-24">
-      <Front font-size={10} />
-    </a>
-    <a href="#back" class="fixed z-10 bg-white shadow p-4 bottom-20 right-6">
-      <Back font-size={10} />
-    </a>
-    <BodyCanvas canvasId="canvas-front-body" client:load />
-    <BodyCanvas canvasId="canvas-back-body" client:load />
+    <div class="w-5/12 mx-auto">
+      <BodyTabs client:load />
+    </div>
   </main>
 </div>
 

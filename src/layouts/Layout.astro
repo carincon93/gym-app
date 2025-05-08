@@ -16,7 +16,7 @@ const { title } = Astro.props;
     {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
     <script src="/src/pwa.ts"></script>
   </head>
-  <body>
+  <body class="overflow-hidden">
     <slot />
   </body>
 </html>

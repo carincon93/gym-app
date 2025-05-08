@@ -94,6 +94,11 @@ export const machines = {
       name: "Aura functional trainer",
       image: "/gym-app/machines/biceps/biceps5.webp",
     },
+    {
+      id: 53,
+      name: "Biceps curl",
+      image: "/gym-app/machines/biceps/biceps6.webp",
+    },
   ],
   Shoulders: [
     {
@@ -230,6 +235,11 @@ export const machines = {
       id: 47,
       name: "Aura low row",
       image: "/gym-app/machines/lats/lats6.webp",
+    },
+    {
+      id: 54,
+      name: "Seated row",
+      image: "/gym-app/machines/lats/lats7.webp",
     },
   ],
   Triceps: [
