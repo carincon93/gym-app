@@ -17,6 +17,11 @@ export const openDB = (STORE_NAME: string): Promise<IDBDatabase> => {
           keyPath: "id",
           autoIncrement: true,
         });
+
+        db.createObjectStore("weeks", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
     };
 

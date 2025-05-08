@@ -18,7 +18,8 @@ import {
 import { useEffect, useState } from "react";
 import type { MaxGymTime } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database } from "lucide-react";
+import { Database, Play } from "lucide-react";
+import { addWeek } from "@/services/week.service";
 
 export const BodyTabs = () => {
   const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
@@ -31,6 +32,10 @@ export const BodyTabs = () => {
 
   const handleRemoveDb = async () => {
     await deleteDB();
+  };
+
+  const handleWeek = async () => {
+    await addWeek();
   };
 
   useEffect(() => {
@@ -75,6 +80,13 @@ export const BodyTabs = () => {
           Start session
         </Button>
       </div>
+
+      <div className="fixed bottom-8 right-4 flex items-center justify-center space-y-2 flex-col z-10">
+        <Button onClick={handleWeek} className=" mx-auto">
+          <Play /> Week
+        </Button>
+      </div>
+
       <Tabs defaultValue="front">
         <TabsList>
           <TabsTrigger value="front" asChild>

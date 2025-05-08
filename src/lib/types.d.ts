@@ -17,3 +17,8 @@ export type MaxGymTime = {
   startTime: number;
   maxTime: number;
 };
+
+export type Week = {
+  id: number;
+  firstDayOfWeek: number;
+};
