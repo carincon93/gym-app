@@ -228,6 +228,12 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 ? "destructive"
                 : "outline"
             }
+            disabled={
+              !week?.lastDayOfWeek ||
+              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
+                ? undefined
+                : true
+            }
           >
             <Play /> Week
           </Button>
