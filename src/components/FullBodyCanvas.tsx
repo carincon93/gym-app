@@ -166,7 +166,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
       <div className="flex flex-col justify-center items-center">
         <canvas id={canvasId} width="390" height="844" />
 
-        <div className="fixed bottom-72 left-0 right-0 text-center text-slate-500 mt-2 text-xs px-4 md:w-5/12 mx-auto">
+        <div className="fixed bottom-62 left-0 right-0 text-center text-slate-500 mt-2 text-xs px-4 md:w-5/12 mx-auto">
           <div className="bg-white p-2 rounded-md shadow-md block">
             <strong>Optimal weekly sets</strong>
             <div className="flex flex-col space-y-2 mt-2">
