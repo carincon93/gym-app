@@ -17,9 +17,10 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
   const riveRef = useRef<rive.Rive | null>(null);
 
   const COLORS = {
-    red: { r: 255, g: 110, b: 96 },
-    green: { r: 114, g: 205, b: 113 },
-    normal: { r: 211, g: 172, b: 235 },
+    excess: { r: 255, g: 110, b: 96 },
+    optimum: { r: 114, g: 205, b: 113 },
+    minimum: { r: 211, g: 172, b: 235 },
+    inactive: { r: 159, g: 170, b: 204 },
   };
 
   // Función para crear instancias de animaciones Rive
@@ -64,10 +65,16 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
           const triceps = mrv(["48", "49", "50", "51"]);
           const lowerBack = mrv(["52"]);
 
-          const checkOptimalSetsByWeek = (qty: number) => ({
+            const checkOptimalSetsByWeek = (qty: number) => ({
             status:
-              qty <= 12 ? COLORS.normal : qty <= 20 ? COLORS.green : COLORS.red,
-          });
+              qty === 0
+              ? COLORS.inactive
+              : qty < 12
+              ? COLORS.minimum
+              : qty <= 20
+              ? COLORS.optimum
+              : COLORS.excess,
+            });
 
           // The Rive object is now loaded and ready to use.
           const vmi = instance.viewModelInstance;
@@ -143,11 +150,6 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
     }, 500);
   }, [records]);
 
-  console.log(Number(week?.lastDayOfWeek));
-  console.log(Date.now());
-  
-  
-
   return (
     <div className="relative" id="full">
       <div className="flex flex-col justify-center items-center">
@@ -161,7 +163,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 <figure
                   className="size-4 rounded-full"
                   style={{
-                    background: `rgb(${COLORS.normal.r}, ${COLORS.normal.g}, ${COLORS.normal.b})`,
+                    background: `rgb(${COLORS.minimum.r}, ${COLORS.minimum.g}, ${COLORS.minimum.b})`,
                   }}
                 />
                 <span>{"<"} 12 sets per muscle group</span>
@@ -170,7 +172,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 <figure
                   className="size-4 rounded-full"
                   style={{
-                    background: `rgb(${COLORS.green.r}, ${COLORS.green.g}, ${COLORS.green.b})`,
+                    background: `rgb(${COLORS.optimum.r}, ${COLORS.optimum.g}, ${COLORS.optimum.b})`,
                   }}
                 />
                 <span>
@@ -182,7 +184,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 <figure
                   className="size-4 rounded-full"
                   style={{
-                    background: `rgb(${COLORS.red.r}, ${COLORS.red.g}, ${COLORS.red.b})`,
+                    background: `rgb(${COLORS.excess.r}, ${COLORS.excess.g}, ${COLORS.excess.b})`,
                   }}
                 />
                 <span>{">"} 20 sets per muscle group</span>
@@ -196,9 +198,9 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
             <strong>Week: </strong>
             {week?.firstDayOfWeek && (
               <>
-                {new Date(week?.firstDayOfWeek).toLocaleDateString() +
+                {new Date(week?.firstDayOfWeek).toLocaleDateString("en-GB") +
                   " to " +
-                  new Date(week?.lastDayOfWeek).toLocaleDateString()}
+                  new Date(week?.lastDayOfWeek).toLocaleDateString("en-GB")}
               </>
             )}
           </span>
