@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database, Info, Play } from "lucide-react";
+import { Database, Hourglass, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 import { toast } from "sonner";
 import FullBodyCanvas from "./FullBodyCanvas";
@@ -64,16 +64,16 @@ export const BodyTabs = () => {
           <span className="-translate-x-1 font-black">X</span>
         </Button>
 
-        <Button onClick={handleAddMaxTime}>
-          <Play /> Session
-        </Button>
-
-        <Button onClick={handleWeek}>
+        {/* <Button onClick={handleWeek}>
           <Play /> Week
+        </Button> */}
+
+        <Button onClick={handleAddMaxTime}>
+          <Play /> Day session
         </Button>
 
         <Button onClick={() => setOpenInfoDialog(true)}>
-          <Info />
+          <Hourglass />
         </Button>
       </div>
 
@@ -98,23 +98,14 @@ export const BodyTabs = () => {
       <AlertDialog open={openInfoDialog} onOpenChange={setOpenInfoDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Info</AlertDialogTitle>
+            <AlertDialogTitle>
+              <Hourglass className="mx-auto" />
+            </AlertDialogTitle>
             <AlertDialogDescription></AlertDialogDescription>
             <div className="text-xs">
               <div className="text-slate-500">
-                <strong>Max hour: </strong>
+                <strong>Maximum hour you must be in the gym: </strong>
                 {maxGymTime?.maxTime?.toString()}
-              </div>
-
-              <div className="text-slate-500 mt-2">
-                <strong>Week: </strong>
-                {week?.firstDayOfWeek && (
-                  <>
-                    {new Date(week?.firstDayOfWeek).toString() +
-                      " to " +
-                      new Date(week?.lastDayOfWeek).toString()}
-                  </>
-                )}
               </div>
             </div>
           </AlertDialogHeader>
@@ -123,8 +114,6 @@ export const BodyTabs = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      <div className="fixed bottom-4 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10"></div>
 
       <Tabs defaultValue="full">
         <TabsList>

@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import * as rive from "@rive-app/canvas";
-import { getWeek } from "@/services/week.service";
+import { addWeek, getWeek } from "@/services/week.service";
 import type { Record, Week } from "@/lib/types";
 import { getRecords } from "@/services/records.service";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { Play } from "lucide-react";
 
 type BodyCanvasProps = {
   canvasId: string;
@@ -13,31 +16,14 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
   const [records, setRecords] = useState<Record[]>([]);
   const riveRef = useRef<rive.Rive | null>(null);
 
-  const mrv = (machineIds: string[]) =>
-    records.filter((record) =>
-      machineIds.includes(record.machineId.toString())
-    );
+  const COLORS = {
+    red: { r: 255, g: 110, b: 96 },
+    green: { r: 114, g: 205, b: 113 },
+    normal: { r: 211, g: 172, b: 235 },
+  };
 
   // Función para crear instancias de animaciones Rive
   const createRiveInstance = () => {
-    const chest = mrv(["1", "2"]);
-
-    const COLORS = {
-      red: { r: 255, g: 110, b: 96 },
-      green: { r: 114, g: 205, b: 113 },
-      normal: { r: 159, g: 170, b: 204 },
-    };
-
-    const CHEST = {
-      range: {
-        min: chest.length < 12,
-        max: chest.length > 12 && chest.length < 20,
-        bad: chest.length > 20,
-      },
-    };
-
-    console.log(CHEST.range);
-
     const canvasElement: HTMLCanvasElement | null = document.getElementById(
       canvasId
     ) as HTMLCanvasElement | null;
@@ -55,16 +41,65 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
         src: "/gym-app/animations/full-body.riv",
         autoBind: true,
         onLoad: () => {
+          const mrv = (machineIds: string[]) =>
+            records.filter((record) =>
+              machineIds.includes(record.machineId.toString())
+            );
+
+          const chest = mrv(["1", "2", "3", "4", "5", "6"]);
+          const quads = mrv(["7", "8", "9", "10"]);
+          const abs = mrv(["11", "12"]);
+          const obliques = mrv(["13"]);
+          const biceps = mrv(["14", "15", "16", "17", "18", "53"]);
+          const shoulders = mrv(["19", "20", "21", "22"]);
+          const forearms = mrv(["23", "24"]);
+          const adductors = mrv(["25"]);
+          const calves = mrv(["26", "27", "28"]);
+          const traps = mrv(["29", "30"]);
+          const neck = mrv(["31", "32"]);
+          const hips = mrv(["33", "34", "35", "36"]);
+          const hamstrings = mrv(["37", "38"]);
+          const glutes = mrv(["39", "40", "41"]);
+          const lats = mrv(["42", "43", "44", "45", "46", "47", "54"]);
+          const triceps = mrv(["48", "49", "50", "51"]);
+          const lowerBack = mrv(["52"]);
+
+          const checkOptimalSetsByWeek = (qty: number) => ({
+            status:
+              qty <= 12 ? COLORS.normal : qty <= 20 ? COLORS.green : COLORS.red,
+          });
+
           // The Rive object is now loaded and ready to use.
           const vmi = instance.viewModelInstance;
           const colorProperty = (colorProperty: string) =>
             vmi?.color(colorProperty);
 
-          colorProperty("GlutesColor")?.rgb(
-            COLORS.green.r,
-            COLORS.green.g,
-            COLORS.green.b
-          );
+          const setMuscleColor = (muscleName: string, sets: number) => {
+            const status = checkOptimalSetsByWeek(sets).status;
+            colorProperty(`${muscleName}Color`)?.rgb(
+              status.r,
+              status.g,
+              status.b
+            );
+          };
+
+          setMuscleColor("Biceps", biceps.length);
+          setMuscleColor("Traps", traps.length);
+          setMuscleColor("Obliques", obliques.length);
+          setMuscleColor("Calves", calves.length);
+          setMuscleColor("Glutes", glutes.length);
+          setMuscleColor("Lats", lats.length);
+          setMuscleColor("Neck", neck.length);
+          setMuscleColor("Quads", quads.length);
+          setMuscleColor("Adductors", adductors.length);
+          setMuscleColor("Hips", hips.length);
+          setMuscleColor("LowerBack", lowerBack.length);
+          setMuscleColor("Hamstrings", hamstrings.length);
+          setMuscleColor("Triceps", triceps.length);
+          setMuscleColor("Forearms", forearms.length);
+          setMuscleColor("Abs", abs.length);
+          setMuscleColor("Shoulders", shoulders.length);
+          setMuscleColor("Chest", chest.length);
         },
       });
 
@@ -77,12 +112,15 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
     }
   };
 
-  useEffect(() => {
+  const handleWeek = async () => {
+    await addWeek();
     getWeek().then(setWeek);
 
-    setTimeout(() => {
-      createRiveInstance();
-    }, 500);
+    toast("New week added.");
+  };
+
+  useEffect(() => {
+    getWeek().then(setWeek);
   }, []);
 
   useEffect(() => {
@@ -99,10 +137,80 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
     });
   }, [week]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      createRiveInstance();
+    }, 500);
+  }, [records]);
+
   return (
     <div className="relative" id="full">
       <div className="flex flex-col justify-center items-center">
         <canvas className="mask-fade" id={canvasId} width="390" height="844" />
+
+        <div className="fixed bottom-72 left-0 right-0 text-center text-slate-500 mt-2 text-xs px-4">
+          <div className="bg-white p-2 rounded-md shadow-md block">
+            <strong>Optimal weekly sets</strong>
+            <div className="flex flex-col space-y-2 mt-2">
+              <div className="flex items-center space-x-2">
+                <figure
+                  className="size-4 rounded-full"
+                  style={{
+                    background: `rgb(${COLORS.normal.r}, ${COLORS.normal.g}, ${COLORS.normal.b})`,
+                  }}
+                />
+                <span>{"<"} 12 sets per muscle group</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <figure
+                  className="size-4 rounded-full"
+                  style={{
+                    background: `rgb(${COLORS.green.r}, ${COLORS.green.g}, ${COLORS.green.b})`,
+                  }}
+                />
+                <span>
+                  {">"} 12 sets and {"<"} 20 sets per muscle group{" "}
+                  <strong className="text-[10px]">(Recommended)</strong>
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <figure
+                  className="size-4 rounded-full"
+                  style={{
+                    background: `rgb(${COLORS.red.r}, ${COLORS.red.g}, ${COLORS.red.b})`,
+                  }}
+                />
+                <span>{">"} 20 sets per muscle group</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="fixed bottom-50 left-0 right-0 text-center text-slate-500 mt-2 text-xs flex items-center justify-center space-x-2">
+          <span className="bg-white p-2 rounded-md shadow-md">
+            <strong>Week: </strong>
+            {week?.firstDayOfWeek && (
+              <>
+                {new Date(week?.firstDayOfWeek).toLocaleDateString() +
+                  " to " +
+                  new Date(week?.lastDayOfWeek).toLocaleDateString()}
+              </>
+            )}
+          </span>
+
+          <Button
+            onClick={handleWeek}
+            size="sm"
+            variant={
+              !week?.lastDayOfWeek ||
+              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
+                ? "destructive"
+                : "outline"
+            }
+          >
+            <Play /> Week
+          </Button>
+        </div>
       </div>
     </div>
   );
