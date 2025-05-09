@@ -250,7 +250,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 <li>{chest.length} sets for chest</li>
                 <li>{quads.length} sets for quads</li>
                 <li>{abs.length} sets for abs</li>
-                <li>{obliques.length} sets for Obliques</li>
+                <li>{obliques.length} sets for obliques</li>
                 <li>{biceps.length} sets for biceps</li>
                 <li>{shoulders.length} sets for shoulders</li>
                 <li>{forearms.length} sets for forearms</li>
