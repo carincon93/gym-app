@@ -20,6 +20,6 @@ export type MaxGymTime = {
 
 export type Week = {
   id: number;
-  firstDayOfWeek: Object;
-  lastDayOfWeek: Object;
+  firstDayOfWeek: string | number | Date;
+  lastDayOfWeek: string | number | Date;
 };

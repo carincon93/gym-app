@@ -21,9 +21,8 @@ export const addWeek = async () => {
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 
-  const timestamp = Date.now();
-  const firstDayOfWeek = new Date(timestamp);
-  const lastDayOfWeek = new Date(timestamp + 604800000);
+  const firstDayOfWeek = Date.now();
+  const lastDayOfWeek = firstDayOfWeek + 604800000;
 
   store.add({ firstDayOfWeek: firstDayOfWeek, lastDayOfWeek: lastDayOfWeek });
 };

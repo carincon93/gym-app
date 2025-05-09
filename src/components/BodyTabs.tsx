@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BodyCanvas from "./BodyCanvas";
 import Front from "@/assets/front.svg";
 import Back from "@/assets/back.svg";
+import Mrv from "@/assets/mrv.svg";
 import { addMaxGymTime, getMaxGymTime } from "@/services/maxtime.service";
 import { Button } from "./ui/button";
 import {
@@ -20,6 +21,7 @@ import { deleteDB } from "@/services/connection.service";
 import { Database, Info, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 import { toast } from "sonner";
+import FullBodyCanvas from "./FullBodyCanvas";
 
 export const BodyTabs = () => {
   const [week, setWeek] = useState<Week>();
@@ -31,7 +33,7 @@ export const BodyTabs = () => {
     await addMaxGymTime();
     getMaxGymTime().then(setMaxGymTime);
 
-    toast("New sessiona added.");
+    toast("New session added.");
   };
 
   const handleRemoveDb = async () => {
@@ -56,7 +58,7 @@ export const BodyTabs = () => {
 
   return (
     <div>
-      <div className="fixed px-2 w-full left-0 bottom-16 z-20 flex items-center justify-between">
+      <div className="fixed px-2 md:w-5/12 mx-auto left-0 right-0 bottom-16 z-20 flex items-center justify-between">
         <Button onClick={() => setOpenDialog(true)} variant="destructive">
           <Database />
           <span className="-translate-x-1 font-black">X</span>
@@ -108,9 +110,9 @@ export const BodyTabs = () => {
                 <strong>Week: </strong>
                 {week?.firstDayOfWeek && (
                   <>
-                    {week?.firstDayOfWeek?.toString() +
+                    {new Date(week?.firstDayOfWeek).toString() +
                       " to " +
-                      week?.lastDayOfWeek?.toString()}
+                      new Date(week?.lastDayOfWeek).toString()}
                   </>
                 )}
               </div>
@@ -124,7 +126,7 @@ export const BodyTabs = () => {
 
       <div className="fixed bottom-4 right-0 left-0 flex items-center justify-center space-y-2 flex-col z-10"></div>
 
-      <Tabs defaultValue="front">
+      <Tabs defaultValue="full">
         <TabsList>
           <TabsTrigger value="front" asChild>
             <img src={Front.src} alt="Front icon" />
@@ -132,12 +134,18 @@ export const BodyTabs = () => {
           <TabsTrigger value="back" asChild>
             <img src={Back.src} alt="Back icon" />
           </TabsTrigger>
+          <TabsTrigger value="full">
+            <img src={Mrv.src} alt="Full icon" width={64} />
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="front">
           <BodyCanvas canvasId="canvas-front-body" />
         </TabsContent>
         <TabsContent value="back">
           <BodyCanvas canvasId="canvas-back-body" />
+        </TabsContent>
+        <TabsContent value="full">
+          <FullBodyCanvas canvasId="canvas-full-body" />
         </TabsContent>
       </Tabs>
     </div>

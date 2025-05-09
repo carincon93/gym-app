@@ -3,7 +3,7 @@ import { openDB } from "./connection.service";
 
 const STORE_NAME = "records";
 
-export const getRecords = async (machine: Machine): Promise<Record[]> => {
+export const getRecords = async (machine: Machine | null): Promise<Record[]> => {
   const db = await openDB(STORE_NAME);
   return new Promise((resolve) => {
     const transaction = db.transaction(STORE_NAME, "readonly");
@@ -12,9 +12,9 @@ export const getRecords = async (machine: Machine): Promise<Record[]> => {
     // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
     request.onsuccess = () => {
       const allRecords = request.result;
-      const filteredRecords = allRecords.filter(
+      const filteredRecords = machine ? allRecords.filter(
         (record) => record.machineId === machine?.id
-      );
+      ) : allRecords;
       resolve(filteredRecords);
     };
   });
