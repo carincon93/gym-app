@@ -221,7 +221,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
                 <div className="relative">
                   <small
-                    className={`absolute bottom-[19px] ${
+                    className={`absolute bottom-[19px] left-0 ${
                       records.length === 0 && "hidden"
                     }`}
                   >
