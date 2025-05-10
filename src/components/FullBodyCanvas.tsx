@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -166,11 +165,11 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
       <div className="flex flex-col justify-center items-center">
         <canvas id={canvasId} width="390" height="844" />
 
-        <div className="fixed bottom-62 left-0 right-0 text-center text-slate-500 mt-2 text-xs px-4 md:w-5/12 mx-auto">
+        <div className="fixed bottom-22 left-0 right-0 text-center text-slate-500 mt-2 text-xs px-4 md:w-5/12 mx-auto">
           <div className="bg-white p-2 rounded-md shadow-md block">
             <strong>Optimal weekly sets</strong>
             <div className="flex flex-col space-y-2 mt-2">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center text-left space-x-2">
                 <figure
                   className="size-4 rounded-full"
                   style={{
@@ -179,7 +178,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 />
                 <span>{"<"} 12 sets per muscle group</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center text-left space-x-2">
                 <figure
                   className="size-4 rounded-full"
                   style={{
@@ -191,7 +190,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                   <strong className="text-[10px]">(Recommended)</strong>
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center text-left space-x-2">
                 <figure
                   className="size-4 rounded-full"
                   style={{
@@ -205,38 +204,6 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
               </Button>
             </div>
           </div>
-        </div>
-
-        <div className="fixed bottom-50 left-0 right-0 text-center text-slate-500 mt-2 text-xs flex items-center justify-center space-x-2">
-          <span className="bg-white p-2 rounded-md shadow-md">
-            <strong>Week: </strong>
-            {week?.firstDayOfWeek && (
-              <>
-                {new Date(week?.firstDayOfWeek).toLocaleDateString("en-GB") +
-                  " to " +
-                  new Date(week?.lastDayOfWeek).toLocaleDateString("en-GB")}
-              </>
-            )}
-          </span>
-
-          <Button
-            onClick={handleWeek}
-            size="sm"
-            variant={
-              !week?.lastDayOfWeek ||
-              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
-                ? "destructive"
-                : "outline"
-            }
-            disabled={
-              !week?.lastDayOfWeek ||
-              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
-                ? undefined
-                : true
-            }
-          >
-            <Play /> Week
-          </Button>
         </div>
       </div>
 

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import * as rive from "@rive-app/canvas";
-import { Play, Square } from "lucide-react";
 
 import {
   Drawer,
@@ -27,9 +26,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const [machineSelected, setMachineSelected] = useState<Machine>();
   const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<number>();
   const [records, setRecords] = useState<Record[]>([]);
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   const riveRef = useRef<rive.Rive | null>(null);
 
@@ -102,7 +99,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     const record: Record = {
       id: Date.now(),
       reps: Number(formData.get("reps")),
-      rest: elapsedTime,
+      rest: 0,
       weight: Number(formData.get("weight")),
       machineId: machineSelected?.id || 0,
     };
@@ -122,20 +119,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
       createRiveInstance();
     }, 500);
   }, []);
-
-  useEffect(() => {
-    if (!startTime) return;
-
-    const updateElapsedTime = () => {
-      setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // In seconds
-    };
-
-    updateElapsedTime(); // Calculate when the page has loaded
-
-    const interval = setInterval(updateElapsedTime, 1000);
-
-    return () => clearInterval(interval);
-  }, [startTime]);
 
   useEffect(() => {
     if (!openDrawer) {
@@ -186,13 +169,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
           <DrawerHeader>
             <DrawerTitle asChild>
               <div className="rounded-md p-2 border mb-6 relative">
-                <span
-                  className={`absolute text-6xl text-center h-full w-full ${
-                    startTime === 0 || elapsedTime === 0 ? "hidden" : "flex"
-                  } items-center justify-center bg-white top-0 left-0 right-0 mx-auto`}
-                >
-                  {elapsedTime}s
-                </span>
                 <div className="flex items-center space-x-4">
                   <img
                     src={machineSelected?.image}
@@ -200,16 +176,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     className="bg-slate-100 rounded-md size-16 object-contain"
                   />
                   <h6>{machineSelected?.name}</h6>
-                </div>
-                <div className="flex items-center mt-2 z-10 relative">
-                  <div className="space-x-1 flex">
-                    <Button onClick={() => setStartTime(Date.now())}>
-                      <Play />
-                    </Button>
-                    <Button onClick={() => setStartTime(0)}>
-                      <Square />
-                    </Button>
-                  </div>
                 </div>
               </div>
             </DrawerTitle>

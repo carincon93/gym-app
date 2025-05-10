@@ -15,19 +15,57 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import { useEffect, useState } from "react";
 import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database, Hourglass, Play } from "lucide-react";
+import { Database, Hourglass, Menu, Play, Square } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 import { toast } from "sonner";
 import FullBodyCanvas from "./FullBodyCanvas";
+import ExitIcon from "./icons/ExitIcon";
+
+type CustomDialogProps = {
+  children: React.ReactNode;
+  title: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+const CustomDialog = ({
+  children,
+  title,
+  open,
+  onOpenChange,
+}: CustomDialogProps) => {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const BodyTabs = () => {
   const [week, setWeek] = useState<Week>();
   const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [openInfoDialog, setOpenInfoDialog] = useState<boolean>(false);
+  const [openMenuDialog, setOpenMenuDialog] = useState<boolean>(false);
+  const [openHourDialog, setOpenHourDialog] = useState<boolean>(false);
+  const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
+  const [startTime, setStartTime] = useState<number>(0);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   const handleAddMaxTime = async () => {
     await addMaxGymTime();
@@ -52,32 +90,114 @@ export const BodyTabs = () => {
   };
 
   useEffect(() => {
+    setOpenMenuDialog(false);
+
+    if (!startTime) return;
+
+    const updateElapsedTime = () => {
+      setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // In seconds
+    };
+
+    updateElapsedTime(); // Calculate when the page has loaded
+
+    const interval = setInterval(updateElapsedTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  useEffect(() => {
     getWeek().then(setWeek);
     getMaxGymTime().then(setMaxGymTime);
   }, []);
 
   return (
     <div>
-      <div className="fixed px-2 md:w-5/12 mx-auto left-0 right-0 bottom-16 z-20 flex items-center justify-between">
-        <Button onClick={() => setOpenDialog(true)} variant="destructive">
-          <Database />
-          <span className="-translate-x-1 font-black">X</span>
-        </Button>
+      <span
+        className={`absolute text-6xl text-center h-full w-full ${
+          startTime === 0 || elapsedTime === 0 ? "hidden" : "flex"
+        } items-center justify-center bg-white top-0 left-0 right-0 mx-auto z-50`}
+      >
+        {elapsedTime}s
+      </span>
 
-        {/* <Button onClick={handleWeek}>
-          <Play /> Week
-        </Button> */}
+      <Button
+        onClick={() => setOpenMenuDialog(true)}
+        className="fixed bottom-4 right-4 z-50"
+      >
+        <Menu />
+        Menu
+      </Button>
 
-        <Button onClick={handleAddMaxTime}>
-          <Play /> Day session
-        </Button>
+      <CustomDialog
+        title="Actions"
+        open={openMenuDialog}
+        onOpenChange={setOpenMenuDialog}
+      >
+        <div className="flex flex-col gap-4">
+          {startTime === 0 ? (
+            <Button onClick={() => setStartTime(Date.now())}>
+              <Play /> Rest
+            </Button>
+          ) : (
+            <Button onClick={() => setStartTime(0)}>
+              <Square /> Rest
+            </Button>
+          )}
 
-        <Button onClick={() => setOpenInfoDialog(true)}>
-          <Hourglass />
-        </Button>
-      </div>
+          <Button
+            onClick={handleWeek}
+            size="sm"
+            variant={
+              !week?.lastDayOfWeek ||
+              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
+                ? "destructive"
+                : "outline"
+            }
+            disabled={
+              !week?.lastDayOfWeek ||
+              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
+                ? undefined
+                : true
+            }
+          >
+            <Play /> Week{" | "}
+            <strong className="text-xs">
+              {week?.firstDayOfWeek
+                ? new Date(week.firstDayOfWeek).toLocaleDateString("en-GB") +
+                  " to " +
+                  new Date(week.lastDayOfWeek).toLocaleDateString("en-GB")
+                : "No week configured"}
+            </strong>
+          </Button>
 
-      <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+          <Button
+            onClick={handleAddMaxTime}
+            className="w-full"
+            disabled={!week?.lastDayOfWeek}
+          >
+            <Play /> Start a session
+          </Button>
+
+          <Button
+            onClick={() => setOpenHourDialog(true)}
+            className="w-full"
+            disabled={!maxGymTime?.maxTime}
+          >
+            <ExitIcon /> Max hour in the gym
+          </Button>
+
+          <Button
+            onClick={() => setOpenAlertDialog(true)}
+            variant="destructive"
+            className="w-full"
+          >
+            <Database />
+            Delete database
+          </Button>
+        </div>
+      </CustomDialog>
+
+      <AlertDialog open={openAlertDialog} onOpenChange={setOpenAlertDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -95,25 +215,22 @@ export const BodyTabs = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={openInfoDialog} onOpenChange={setOpenInfoDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              <Hourglass className="mx-auto" />
-            </AlertDialogTitle>
-            <AlertDialogDescription></AlertDialogDescription>
-            <div className="text-xs">
-              <div className="text-slate-500">
-                <strong>Maximum hour you must be in the gym: </strong>
-                {maxGymTime?.maxTime?.toString()}
-              </div>
-            </div>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Close</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CustomDialog
+        title={
+          <>
+            <Hourglass className="mx-auto" />
+          </>
+        }
+        open={openHourDialog}
+        onOpenChange={setOpenHourDialog}
+      >
+        <div className="text-xs">
+          <div className="text-slate-500">
+            <strong>Maximum hour you must be in the gym: </strong>
+            {maxGymTime?.maxTime?.toString()}
+          </div>
+        </div>
+      </CustomDialog>
 
       <Tabs defaultValue="full">
         <TabsList>
