@@ -10,6 +10,17 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -132,7 +143,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
       className="relative -translate-y-20"
       id={canvasId === "canvas-front-body" ? "front" : "back"}
     >
-      <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
+      <Drawer
+        open={openDrawer}
+        onOpenChange={setOpenDrawer}
+        repositionInputs={false}
+      >
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Select a machine or an exercise:</DrawerTitle>
@@ -164,11 +179,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
         </DrawerContent>
       </Drawer>
 
-      <Drawer open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle asChild>
-              <div className="rounded-md p-2 border mb-6 relative">
+      <Dialog open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle asChild>
+              <div className="rounded-md p-2 border mt-4 mb-6 relative">
                 <div className="flex items-center space-x-4">
                   <img
                     src={machineSelected?.image}
@@ -178,8 +193,8 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   <h6>{machineSelected?.name}</h6>
                 </div>
               </div>
-            </DrawerTitle>
-            <DrawerDescription asChild>
+            </DialogTitle>
+            <DialogDescription asChild>
               <div>
                 <div className="relative">
                   <small
@@ -227,54 +242,55 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   </div>
                 </div>
               </div>
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="px-4">
-            <form
-              id="machine-form"
-              className="space-x-2 grid grid-cols-2"
-              onSubmit={handleSubmit}
-            >
-              <fieldset>
-                <Label className="my-2 text-xs" htmlFor="weight">
-                  Weight (Kg) *
-                </Label>
-                <Input
-                  name="weight"
-                  id="weight"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  autoComplete="off"
-                  required
-                />
-              </fieldset>
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            id="machine-form"
+            className="space-x-2 grid grid-cols-2"
+            onSubmit={handleSubmit}
+          >
+            <fieldset>
+              <Label className="my-2 text-xs" htmlFor="weight">
+                Weight (Kg) *
+              </Label>
+              <Input
+                name="weight"
+                id="weight"
+                type="number"
+                min="0"
+                step="0.1"
+                autoComplete="off"
+                required
+              />
+            </fieldset>
 
-              <fieldset>
-                <Label className="my-2 text-xs" htmlFor="reps">
-                  Reps *
-                </Label>
-                <Input
-                  name="reps"
-                  id="reps"
-                  type="number"
-                  min="0"
-                  autoComplete="off"
-                  required
-                />
-              </fieldset>
-            </form>
-          </div>
-          <DrawerFooter>
+            <fieldset>
+              <Label className="my-2 text-xs" htmlFor="reps">
+                Reps *
+              </Label>
+              <Input
+                name="reps"
+                id="reps"
+                type="number"
+                min="0"
+                autoComplete="off"
+                required
+              />
+            </fieldset>
+          </form>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+
             <Button type="submit" form="machine-form">
               Save
             </Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col justify-center items-center">
         <canvas className="mask-fade" id={canvasId} width="390" height="844" />
