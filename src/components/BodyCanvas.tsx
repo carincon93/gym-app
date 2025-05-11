@@ -27,6 +27,8 @@ import { Input } from "./ui/input";
 import { machines } from "@/data/data";
 import { addRecord, getRecords } from "@/services/records.service";
 import type { Machine, Record } from "@/lib/types";
+import { Play, Square } from "lucide-react";
+import { showStopWatch } from "@/stores/stopWatchStore";
 
 type BodyCanvasProps = {
   canvasId: string;
@@ -140,7 +142,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
   return (
     <div
-      className="relative -translate-y-20"
+      className="-translate-y-20"
       id={canvasId === "canvas-front-body" ? "front" : "back"}
     >
       <Drawer
@@ -191,6 +193,12 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     className="bg-slate-100 rounded-md size-16 object-contain"
                   />
                   <h6>{machineSelected?.name}</h6>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <Button onClick={() => showStopWatch.set(true)}>
+                    <Play /> Rest
+                  </Button>
                 </div>
               </div>
             </DialogTitle>

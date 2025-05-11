@@ -26,7 +26,7 @@ import {
 import { useEffect, useState } from "react";
 import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database, Hourglass, Menu, Play, Square } from "lucide-react";
+import { Database, Hourglass, Menu, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 import { toast } from "sonner";
 import FullBodyCanvas from "./FullBodyCanvas";
@@ -64,8 +64,6 @@ export const BodyTabs = () => {
   const [openMenuDialog, setOpenMenuDialog] = useState<boolean>(false);
   const [openHourDialog, setOpenHourDialog] = useState<boolean>(false);
   const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<number>(0);
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   const handleAddMaxTime = async () => {
     await addMaxGymTime();
@@ -90,36 +88,12 @@ export const BodyTabs = () => {
   };
 
   useEffect(() => {
-    setOpenMenuDialog(false);
-
-    if (!startTime) return;
-
-    const updateElapsedTime = () => {
-      setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // In seconds
-    };
-
-    updateElapsedTime(); // Calculate when the page has loaded
-
-    const interval = setInterval(updateElapsedTime, 1000);
-
-    return () => clearInterval(interval);
-  }, [startTime]);
-
-  useEffect(() => {
     getWeek().then(setWeek);
     getMaxGymTime().then(setMaxGymTime);
   }, []);
 
   return (
     <div>
-      <span
-        className={`absolute text-6xl text-center h-full w-full ${
-          startTime === 0 || elapsedTime === 0 ? "hidden" : "flex"
-        } items-center justify-center bg-white top-0 left-0 right-0 mx-auto z-50`}
-      >
-        {elapsedTime}s
-      </span>
-
       <Button
         onClick={() => setOpenMenuDialog(true)}
         className="fixed bottom-4 right-4 z-50"
@@ -134,16 +108,6 @@ export const BodyTabs = () => {
         onOpenChange={setOpenMenuDialog}
       >
         <div className="flex flex-col gap-4">
-          {startTime === 0 ? (
-            <Button onClick={() => setStartTime(Date.now())}>
-              <Play /> Rest
-            </Button>
-          ) : (
-            <Button onClick={() => setStartTime(0)}>
-              <Square /> Rest
-            </Button>
-          )}
-
           <Button
             onClick={handleWeek}
             size="sm"
@@ -241,7 +205,7 @@ export const BodyTabs = () => {
             <img src={Back.src} alt="Back icon" />
           </TabsTrigger>
           <TabsTrigger value="full">
-            <img src={Mrv.src} alt="Full icon" width={64} />
+            <img src={Mrv.src} alt="Full icon" className="size-full" />
           </TabsTrigger>
         </TabsList>
         <TabsContent value="front">
