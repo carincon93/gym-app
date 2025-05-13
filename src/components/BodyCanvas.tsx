@@ -3,10 +3,7 @@ import * as rive from "@rive-app/canvas";
 
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -26,9 +23,9 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { machines } from "@/data/data";
 import { addRecord, getRecords } from "@/services/records.service";
-import type { Machine, Record } from "@/lib/types";
-import { Play, Square } from "lucide-react";
-import { showStopWatch } from "@/stores/stopWatchStore";
+import type { Machine, Record, Week } from "@/lib/types";
+import { Play } from "lucide-react";
+import { showStopWatch, checkIfWeekSelected } from "@/stores/gymStore";
 
 type BodyCanvasProps = {
   canvasId: string;
@@ -40,6 +37,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [records, setRecords] = useState<Record[]>([]);
+  const [selectedWeek, setSelectedWeek] = useState<Week>();
 
   const riveRef = useRef<rive.Rive | null>(null);
 
@@ -128,9 +126,10 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   };
 
   useEffect(() => {
+    checkIfWeekSelected().then(setSelectedWeek);
     setTimeout(() => {
       createRiveInstance();
-    }, 500);
+    }, 1000);
   }, []);
 
   useEffect(() => {
@@ -268,6 +267,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                 min="0"
                 step="0.1"
                 autoComplete="off"
+                disabled={!selectedWeek?.lastDayOfWeek}
                 required
               />
             </fieldset>
@@ -282,6 +282,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                 type="number"
                 min="0"
                 autoComplete="off"
+                disabled={!selectedWeek?.lastDayOfWeek}
                 required
               />
             </fieldset>
@@ -293,7 +294,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
               </Button>
             </DialogClose>
 
-            <Button type="submit" form="machine-form">
+            <Button
+              type="submit"
+              form="machine-form"
+              disabled={!selectedWeek?.lastDayOfWeek}
+            >
               Save
             </Button>
           </DialogFooter>

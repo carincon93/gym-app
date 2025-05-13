@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { showStopWatch } from "@/stores/stopWatchStore";
+import { showStopWatch } from "@/stores/gymStore";
 import { useStore } from "@nanostores/react";
 import { Button } from "./ui/button";
 import { Square } from "lucide-react";
