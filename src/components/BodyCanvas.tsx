@@ -257,6 +257,21 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             onSubmit={handleSubmit}
           >
             <fieldset>
+              <Label className="my-2 text-xs" htmlFor="reps">
+                Reps *
+              </Label>
+              <Input
+                name="reps"
+                id="reps"
+                type="number"
+                min="0"
+                autoComplete="off"
+                disabled={!selectedWeek?.lastDayOfWeek}
+                required
+              />
+            </fieldset>
+
+            <fieldset>
               <Label className="my-2 text-xs" htmlFor="weight">
                 Weight (Kg) *
               </Label>
@@ -266,21 +281,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                 type="number"
                 min="0"
                 step="0.1"
-                autoComplete="off"
-                disabled={!selectedWeek?.lastDayOfWeek}
-                required
-              />
-            </fieldset>
-
-            <fieldset>
-              <Label className="my-2 text-xs" htmlFor="reps">
-                Reps *
-              </Label>
-              <Input
-                name="reps"
-                id="reps"
-                type="number"
-                min="0"
                 autoComplete="off"
                 disabled={!selectedWeek?.lastDayOfWeek}
                 required
