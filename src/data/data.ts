@@ -241,6 +241,11 @@ export const machines = {
       name: "Seated row",
       image: "/gym-app/machines/lats/lats7.webp",
     },
+    {
+      id: 55,
+      name: "Barbell row",
+      image: "/gym-app/machines/lats/lats8.webp",
+    },
   ],
   Triceps: [
     {

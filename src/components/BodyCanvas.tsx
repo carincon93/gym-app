@@ -22,9 +22,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { machines } from "@/data/data";
-import { addRecord, getRecords } from "@/services/records.service";
+import {
+  addRecord,
+  getRecords,
+  deleteRecord,
+} from "@/services/records.service";
 import type { Machine, Record, Week } from "@/lib/types";
-import { Play } from "lucide-react";
+// import { Play } from "lucide-react";
 import { showStopWatch, checkIfWeekSelected } from "@/stores/gymStore";
 
 type BodyCanvasProps = {
@@ -116,6 +120,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     };
 
     handleAddRecord(record);
+    showStopWatch.set(true);
   };
 
   const handleAddRecord = async (newRecord: Record) => {
@@ -123,6 +128,15 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
     await addRecord(newRecord);
     setRecords([...records, newRecord]);
+  };
+
+  const handleDeleteRecord = async (record: Record) => {
+    const newRecords = records.filter(
+      (oldRecord) => oldRecord.id !== record.id
+    );
+    setRecords(newRecords);
+
+    await deleteRecord(record);
   };
 
   useEffect(() => {
@@ -194,11 +208,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   <h6>{machineSelected?.name}</h6>
                 </div>
 
-                <div className="flex items-center justify-center">
+                {/* <div className="flex items-center justify-center">
                   <Button onClick={() => showStopWatch.set(true)}>
                     <Play /> Rest
                   </Button>
-                </div>
+                </div> */}
               </div>
             </DialogTitle>
             <DialogDescription asChild>
@@ -212,13 +226,16 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     Weight (Kg)
                   </small>
                   <div className="flex space-x-1 items-end justify-center pl-4">
-                    {records.slice(-10).map((record) => (
-                      <div key={`weight-${record.id}`}>
+                    {records.slice(-15).map((record) => (
+                      <div
+                        key={`weight-${record.id}`}
+                        onClick={() => handleDeleteRecord(record)}
+                      >
                         <div
-                          className={`w-4 bg-amber-400 flex justify-center`}
+                          className={`w-4 bg-amber-400 flex justify-center select-none`}
                           style={{ height: record.weight / 1.5 + "px" }}
                         />
-                        <small className="block text-center">
+                        <small className="block text-center text-[9px]">
                           {record.weight}
                         </small>
                       </div>
@@ -235,13 +252,16 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     Reps
                   </small>
                   <div className="flex space-x-1 items-end justify-center pl-4 mt-4">
-                    {records.slice(-10).map((record) => (
-                      <div key={`rep-${record.id}`}>
+                    {records.slice(-15).map((record) => (
+                      <div
+                        key={`rep-${record.id}`}
+                        onClick={() => handleDeleteRecord(record)}
+                      >
                         <div
                           className={`w-4 bg-green-400 flex justify-center`}
                           style={{ height: record.reps + "px" }}
                         />
-                        <small className="block text-center">
+                        <small className="block text-center text-[9px]">
                           {record.reps}
                         </small>
                       </div>
