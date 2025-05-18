@@ -40,7 +40,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
   const hips = mrv(["33", "34", "35", "36"]);
   const hamstrings = mrv(["37", "38"]);
   const glutes = mrv(["39", "40", "41"]);
-  const lats = mrv(["42", "43", "44", "45", "46", "47", "54"]);
+  const lats = mrv(["42", "43", "44", "45", "46", "47", "54", "55"]);
   const triceps = mrv(["48", "49", "50", "51"]);
   const lowerBack = mrv(["52"]);
 
