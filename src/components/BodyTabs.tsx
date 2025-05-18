@@ -133,12 +133,6 @@ export const BodyTabs = () => {
                 ? "destructive"
                 : "outline"
             }
-            disabled={
-              !week?.lastDayOfWeek ||
-              (week?.lastDayOfWeek && Number(week?.lastDayOfWeek) < Date.now())
-                ? undefined
-                : true
-            }
           >
             <Play /> Week{" | "}
             <CalendarDays />
