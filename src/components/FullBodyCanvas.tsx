@@ -4,17 +4,6 @@ import { addWeek, getWeek } from "@/services/week.service";
 import type { Record, Week } from "@/lib/types";
 import { getRecords } from "@/services/records.service";
 import { toast } from "sonner";
-import { Button } from "./ui/button";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Info, Play } from "lucide-react";
 
 type BodyCanvasProps = {
   canvasId: string;
@@ -24,7 +13,6 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
   const [week, setWeek] = useState<Week>();
   const [records, setRecords] = useState<Record[]>([]);
   const riveRef = useRef<rive.Rive | null>(null);
-  const [opeDialog, setOpenDialog] = useState<boolean>(false);
 
   const COLORS = {
     excess: { r: 255, g: 110, b: 96 },
@@ -91,6 +79,13 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
           const colorProperty = (colorProperty: string) =>
             vmi?.color(colorProperty);
 
+          const setStringProperty = (propertyName: string, value: string) => {
+            const property = vmi?.string(propertyName);
+            if (property) {
+              property.value = value;
+            }
+          };
+
           const setMuscleColor = (muscleName: string, sets: number) => {
             const status = checkOptimalSetsByWeek(sets).status;
             colorProperty(`${muscleName}Color`)?.rgb(
@@ -99,6 +94,24 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
               status.b
             );
           };
+
+          setStringProperty("bicepsTxt", biceps.length.toString());
+          setStringProperty("hipsTxt", hips.length.toString());
+          setStringProperty("adductorsTxt", adductors.length.toString());
+          setStringProperty("calvesTxt", calves.length.toString());
+          setStringProperty("quadsTxt", quads.length.toString());
+          setStringProperty("neckTxt", neck.length.toString());
+          setStringProperty("shouldersTxt", shoulders.length.toString());
+          setStringProperty("chestTxt", chest.length.toString());
+          setStringProperty("obliquesTxt", obliques.length.toString());
+          setStringProperty("absTxt", abs.length.toString());
+          setStringProperty("forearmsTxt", forearms.length.toString());
+          setStringProperty("hamstringsTxt", hamstrings.length.toString());
+          setStringProperty("glutesTxt", glutes.length.toString());
+          setStringProperty("lowerBackTxt", lowerBack.length.toString());
+          setStringProperty("tricepsTxt", triceps.length.toString());
+          setStringProperty("trapsTxt", triceps.length.toString());
+          setStringProperty("latsTxt", lats.length.toString());
 
           setMuscleColor("Biceps", biceps.length);
           setMuscleColor("Traps", traps.length);
@@ -199,46 +212,10 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                 />
                 <span>{">"} 20 sets per muscle group</span>
               </div>
-              <Button onClick={() => setOpenDialog(true)} variant="outline">
-                <Info />
-              </Button>
             </div>
           </div>
         </div>
       </div>
-
-      <AlertDialog open={opeDialog} onOpenChange={setOpenDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sets per muscle group</AlertDialogTitle>
-            <AlertDialogDescription></AlertDialogDescription>
-            <div className="text-xs">
-              <ul>
-                <li>{chest.length} sets for chest</li>
-                <li>{quads.length} sets for quads</li>
-                <li>{abs.length} sets for abs</li>
-                <li>{obliques.length} sets for obliques</li>
-                <li>{biceps.length} sets for biceps</li>
-                <li>{shoulders.length} sets for shoulders</li>
-                <li>{forearms.length} sets for forearms</li>
-                <li>{adductors.length} sets for adductors</li>
-                <li>{calves.length} sets for calves</li>
-                <li>{traps.length} sets for traps</li>
-                <li>{neck.length} sets for neck</li>
-                <li>{hips.length} sets for hips</li>
-                <li>{hamstrings.length} sets for hamstrings</li>
-                <li>{glutes.length} sets for glutes</li>
-                <li>{lats.length} sets for lats</li>
-                <li>{triceps.length} sets for tricpes</li>
-                <li>{lowerBack.length} sets for lower back</li>
-              </ul>
-            </div>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Close</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
