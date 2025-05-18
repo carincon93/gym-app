@@ -26,7 +26,7 @@ import {
 import { useEffect, useState } from "react";
 import type { MaxGymTime, Week } from "@/lib/types";
 import { deleteDB } from "@/services/connection.service";
-import { Database, Hourglass, Menu, Play } from "lucide-react";
+import { CalendarDays, Database, Hourglass, Menu, Play } from "lucide-react";
 import { addWeek, getWeek } from "@/services/week.service";
 import { toast } from "sonner";
 import FullBodyCanvas from "./FullBodyCanvas";
@@ -125,7 +125,8 @@ export const BodyTabs = () => {
             }
           >
             <Play /> Week{" | "}
-            <strong className="text-xs">
+            <CalendarDays />
+            <strong className="text-[8px]">
               {week?.firstDayOfWeek
                 ? new Date(week.firstDayOfWeek).toLocaleDateString("en-GB") +
                   " to " +
@@ -139,15 +140,11 @@ export const BodyTabs = () => {
             className="w-full"
             disabled={!week?.lastDayOfWeek}
           >
-            <Play /> Start a session
-          </Button>
-
-          <Button
-            onClick={() => setOpenHourDialog(true)}
-            className="w-full"
-            disabled={!maxGymTime?.maxTime}
-          >
-            <ExitIcon /> Max hour in the gym
+            <Play />
+            Start a new session | <ExitIcon />{" "}
+            <small className="text-[8px]">
+              {maxGymTime?.maxTime?.toString()}
+            </small>
           </Button>
 
           <Button
@@ -178,23 +175,6 @@ export const BodyTabs = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      <CustomDialog
-        title={
-          <>
-            <Hourglass className="mx-auto" />
-          </>
-        }
-        open={openHourDialog}
-        onOpenChange={setOpenHourDialog}
-      >
-        <div className="text-xs">
-          <div className="text-slate-500">
-            <strong>Maximum hour you must be in the gym: </strong>
-            {maxGymTime?.maxTime?.toString()}
-          </div>
-        </div>
-      </CustomDialog>
 
       <Tabs defaultValue="full">
         <TabsList>
