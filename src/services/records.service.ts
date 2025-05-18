@@ -17,7 +17,7 @@ export const getRecords = async (
       const filteredRecords = machine
         ? allRecords.filter((record) => record.machineId === machine?.id)
         : allRecords;
-      resolve(filteredRecords);
+      resolve(filteredRecords.toSorted((a, b) => a.id - b.id));
     };
   });
 };
@@ -27,6 +27,13 @@ export const addRecord = async (record: Record) => {
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   store.add(record);
+};
+
+export const updateRecord = async (record: Record) => {
+  const db = await openDB(STORE_NAME);
+  const transaction = db.transaction(STORE_NAME, "readwrite");
+  const store = transaction.objectStore(STORE_NAME);
+  store.put(record);
 };
 
 export const deleteRecord = async (record: Record) => {

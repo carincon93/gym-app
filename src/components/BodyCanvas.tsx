@@ -26,6 +26,7 @@ import {
   addRecord,
   getRecords,
   deleteRecord,
+  updateRecord,
 } from "@/services/records.service";
 import type { Machine, Record, Week } from "@/lib/types";
 // import { Play } from "lucide-react";
@@ -38,11 +39,12 @@ type BodyCanvasProps = {
 export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const [muscleSelected, setMuscleSelected] = useState<string>("");
   const [machineSelected, setMachineSelected] = useState<Machine>();
-  const [openMachineDrawer, setOpenMachineDrawer] = useState<boolean>(false);
+  const [openMachineDialog, setOpenMachineDialog] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [records, setRecords] = useState<Record[]>([]);
   const [selectedWeek, setSelectedWeek] = useState<Week>();
-
+  const [openUpdateDialog, setOpenUpdateDialog] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<Record>();
   const riveRef = useRef<rive.Rive | null>(null);
 
   // Función para crear instancias de animaciones Rive
@@ -103,10 +105,10 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const handleMachineSelected = (machine: Machine) => {
     setMachineSelected(machine);
     getRecords(machine).then(setRecords);
-    setOpenMachineDrawer(true);
+    setOpenMachineDialog(true);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
@@ -114,13 +116,36 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     const record: Record = {
       id: Date.now(),
       reps: Number(formData.get("reps")),
-      rest: 0,
+      rest: 180,
       weight: Number(formData.get("weight")),
       machineId: machineSelected?.id || 0,
     };
 
     handleAddRecord(record);
     showStopWatch.set(true);
+  };
+
+  const handleUpdateFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const record: Record = {
+      id: selectedRecord?.id || Date.now(),
+      reps: Number(formData.get("reps")),
+      rest: 180,
+      weight: Number(formData.get("weight")),
+      machineId: selectedRecord?.machineId || 0,
+    };
+
+    handleUpdateRecord(record);
+    setOpenUpdateDialog(false);
+  };
+
+  const handleSelectedRecord = (record: Record) => {
+    setSelectedRecord(record);
+    setOpenUpdateDialog(true);
   };
 
   const handleAddRecord = async (newRecord: Record) => {
@@ -130,6 +155,17 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     setRecords([...records, newRecord]);
   };
 
+  const handleUpdateRecord = async (newRecord: Record) => {
+    if (!newRecord.machineId) return;
+
+    await updateRecord(newRecord);
+    setRecords((prevRecords) =>
+      prevRecords.map((record) =>
+        record.id === newRecord.id ? { ...record, ...newRecord } : record
+      )
+    );
+  };
+
   const handleDeleteRecord = async (record: Record) => {
     const newRecords = records.filter(
       (oldRecord) => oldRecord.id !== record.id
@@ -137,6 +173,8 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     setRecords(newRecords);
 
     await deleteRecord(record);
+    setOpenUpdateDialog(false);
+    setSelectedRecord(undefined);
   };
 
   useEffect(() => {
@@ -194,7 +232,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
         </DrawerContent>
       </Drawer>
 
-      <Dialog open={openMachineDrawer} onOpenChange={setOpenMachineDrawer}>
+      <Dialog open={openMachineDialog} onOpenChange={setOpenMachineDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle asChild>
@@ -207,12 +245,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   />
                   <h6>{machineSelected?.name}</h6>
                 </div>
-
-                {/* <div className="flex items-center justify-center">
-                  <Button onClick={() => showStopWatch.set(true)}>
-                    <Play /> Rest
-                  </Button>
-                </div> */}
               </div>
             </DialogTitle>
             <DialogDescription asChild>
@@ -223,46 +255,46 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                       records.length === 0 && "hidden"
                     }`}
                   >
-                    Weight (Kg)
+                    Reps
                   </small>
                   <div className="flex space-x-1 items-end justify-center pl-4">
                     {records.slice(-15).map((record) => (
                       <div
-                        key={`weight-${record.id}`}
-                        onClick={() => handleDeleteRecord(record)}
+                        key={`rep-${record.id}`}
+                        onClick={() => handleSelectedRecord(record)}
                       >
                         <div
-                          className={`w-4 bg-amber-400 flex justify-center select-none`}
-                          style={{ height: record.weight / 1.5 + "px" }}
+                          className={`w-4 bg-green-400 flex justify-center`}
+                          style={{ height: record.reps + "px" }}
                         />
-                        <small className="block text-center text-[9px]">
-                          {record.weight}
+                        <small className="block text-center text-[8px]">
+                          {record.reps}
                         </small>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="relative">
+                <div className="relative mt-4">
                   <small
-                    className={`absolute bottom-[19px] left-0 ${
+                    className={`absolute left-0 bottom-[19px] ${
                       records.length === 0 && "hidden"
                     }`}
                   >
-                    Reps
+                    Weight (Kg)
                   </small>
-                  <div className="flex space-x-1 items-end justify-center pl-4 mt-4">
+                  <div className="flex space-x-1 items-end justify-center pl-4">
                     {records.slice(-15).map((record) => (
                       <div
-                        key={`rep-${record.id}`}
-                        onClick={() => handleDeleteRecord(record)}
+                        key={`weight-${record.id}`}
+                        onClick={() => handleSelectedRecord(record)}
                       >
                         <div
-                          className={`w-4 bg-green-400 flex justify-center`}
-                          style={{ height: record.reps + "px" }}
+                          className={`w-4 bg-amber-400 flex justify-center select-none`}
+                          style={{ height: record.weight / 1.5 + "px" }}
                         />
-                        <small className="block text-center text-[9px]">
-                          {record.reps}
+                        <small className="block text-center text-[8px]">
+                          {record.weight}
                         </small>
                       </div>
                     ))}
@@ -274,7 +306,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
           <form
             id="machine-form"
             className="space-x-2 grid grid-cols-2"
-            onSubmit={handleSubmit}
+            onSubmit={handleAddFormSubmit}
           >
             <fieldset>
               <Label className="my-2 text-xs" htmlFor="reps">
@@ -319,7 +351,80 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
               form="machine-form"
               disabled={!selectedWeek?.lastDayOfWeek}
             >
-              Save
+              Save and rest
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openUpdateDialog} onOpenChange={setOpenUpdateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle asChild>
+              <div className="rounded-md p-2 border mt-4 mb-6 relative">
+                Modify record
+              </div>
+            </DialogTitle>
+            <DialogDescription asChild></DialogDescription>
+          </DialogHeader>
+          <form
+            id="update-form"
+            className="space-x-2 grid grid-cols-2"
+            onSubmit={handleUpdateFormSubmit}
+          >
+            <fieldset>
+              <Label className="my-2 text-xs" htmlFor="reps">
+                Reps *
+              </Label>
+              <Input
+                name="reps"
+                id="reps"
+                type="number"
+                min="0"
+                autoComplete="off"
+                disabled={!selectedWeek?.lastDayOfWeek}
+                required
+              />
+            </fieldset>
+
+            <fieldset>
+              <Label className="my-2 text-xs" htmlFor="weight">
+                Weight (Kg) *
+              </Label>
+              <Input
+                name="weight"
+                id="weight"
+                type="number"
+                min="0"
+                step="0.1"
+                autoComplete="off"
+                disabled={!selectedWeek?.lastDayOfWeek}
+                required
+              />
+            </fieldset>
+          </form>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+
+            <Button
+              variant="destructive"
+              onClick={() =>
+                selectedRecord && handleDeleteRecord(selectedRecord)
+              }
+            >
+              Delete
+            </Button>
+
+            <Button
+              type="submit"
+              form="update-form"
+              disabled={!selectedWeek?.lastDayOfWeek}
+            >
+              Update
             </Button>
           </DialogFooter>
         </DialogContent>

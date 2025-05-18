@@ -109,7 +109,23 @@ export const BodyTabs = () => {
       >
         <div className="flex flex-col gap-4">
           <Button
+            onClick={handleAddMaxTime}
+            className="w-full flex-col py-8"
+            disabled={!week?.lastDayOfWeek}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Play />
+              Start a new session
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <ExitIcon />{" "}
+              <p className="text-[8px]">{maxGymTime?.maxTime?.toString()}</p>
+            </div>
+          </Button>
+
+          <Button
             onClick={handleWeek}
+            className="flex items-center justify-center"
             size="sm"
             variant={
               !week?.lastDayOfWeek ||
@@ -126,25 +142,13 @@ export const BodyTabs = () => {
           >
             <Play /> Week{" | "}
             <CalendarDays />
-            <strong className="text-[8px]">
+            <p className="text-[8px]">
               {week?.firstDayOfWeek
                 ? new Date(week.firstDayOfWeek).toLocaleDateString("en-GB") +
                   " to " +
                   new Date(week.lastDayOfWeek).toLocaleDateString("en-GB")
                 : "No week configured"}
-            </strong>
-          </Button>
-
-          <Button
-            onClick={handleAddMaxTime}
-            className="w-full"
-            disabled={!week?.lastDayOfWeek}
-          >
-            <Play />
-            Start a new session | <ExitIcon />{" "}
-            <small className="text-[8px]">
-              {maxGymTime?.maxTime?.toString()}
-            </small>
+            </p>
           </Button>
 
           <Button
