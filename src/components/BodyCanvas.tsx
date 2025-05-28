@@ -276,7 +276,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   >
                     Reps
                   </small>
-                  <div className="flex space-x-1 items-end justify-center pl-4">
+                  <div className="flex space-x-1 items-end justify-center">
                     {records.slice(-10).map((record) => (
                       <div
                         key={`rep-${record.id}`}
@@ -303,7 +303,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     Weight <br />
                     (Kg)
                   </small>
-                  <div className="flex space-x-1 items-end justify-center pl-4">
+                  <div className="flex space-x-1 items-end justify-center">
                     {records.slice(-10).map((record) => (
                       <div
                         key={`weight-${record.id}`}
@@ -329,7 +329,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   >
                     Date
                   </small>
-                  <div className="flex items-end justify-center pl-4">
+                  <div className="flex items-end justify-center">
                     {records.slice(-10).map((record) => (
                       <div
                         key={`weight-${record.id}`}
