@@ -389,6 +389,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             </fieldset>
           </form>
           <DialogFooter>
+            <div className="flex justify-between items-center w-full">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
                 Close
@@ -402,6 +403,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             >
               Save and rest
             </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
