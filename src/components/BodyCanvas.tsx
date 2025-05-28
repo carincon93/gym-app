@@ -237,13 +237,32 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
           <DialogHeader>
             <DialogTitle asChild>
               <div className="rounded-md p-2 border mt-4 mb-6 relative">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-between space-x-4">
                   <img
                     src={machineSelected?.image}
                     alt={`Machine ${machineSelected?.id}`}
                     className="bg-slate-100 rounded-md size-16 object-contain"
                   />
                   <h6>{machineSelected?.name}</h6>
+
+                  <div>
+                    {machineSelected?.seatingLevel ? (
+                      <small className="text-[10px] block">
+                        Seating level: {machineSelected.seatingLevel}
+                      </small>
+                    ) : (
+                      <></>
+                    )}
+
+                    {machineSelected?.startingResistance ? (
+                      <small className="text-[10px] block">
+                        Starting resistance:{" "}
+                        {machineSelected.startingResistance}
+                      </small>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               </div>
             </DialogTitle>
@@ -295,6 +314,36 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                         />
                         <small className="block text-center text-[8px]">
                           {record.weight}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="relative mt-4">
+                  <small
+                    className={`absolute left-0 bottom-0 ${
+                      records.length === 0 && "hidden"
+                    }`}
+                  >
+                    Date
+                  </small>
+                  <div className="flex space-x-1 items-end justify-center pl-4">
+                    {records.slice(-15).map((record) => (
+                      <div
+                        key={`weight-${record.id}`}
+                        onClick={() => handleSelectedRecord(record)}
+                      >
+                        <div
+                          className={`w-4  flex justify-center select-none`}
+                        />
+                        <small className="block text-center text-[8px] -rotate-90">
+                          {record.id
+                            ? new Date(record.id).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                              })
+                            : ""}
                         </small>
                       </div>
                     ))}

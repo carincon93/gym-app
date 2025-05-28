@@ -78,13 +78,13 @@ define(['./workbox-86c9b217'], (function (workbox) { 'use strict';
    * See https://goo.gl/S9QRab
    */
   workbox.precacheAndRoute([{
-    "url": "/",
-    "revision": "0.prb3flgikuo"
+    "url": "/gym-app/index.html",
+    "revision": "0.2pttio578sg"
   }], {
     "directoryIndex": "index.html"
   });
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/"), {
+  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/gym-app/index.html"), {
     allowlist: [/^\/$/]
   }));
 

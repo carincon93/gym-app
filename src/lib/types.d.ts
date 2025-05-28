@@ -9,6 +9,8 @@ export type Record = {
 export type Machine = {
   id: number;
   name: string;
+  startingResistance: number;
+  seatingLevel: string;
   image: string;
 };
 

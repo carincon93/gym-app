@@ -199,7 +199,7 @@ export default function FullBodyCanvas({ canvasId }: BodyCanvasProps) {
                   }}
                 />
                 <span>
-                  {">"} 12 sets and {"<"} 20 sets per muscle group{" "}
+                  {">"} 12 and {"<"} 20 sets per muscle group{" "}
                   <strong className="text-[10px]">(Recommended)</strong>
                 </span>
               </div>
