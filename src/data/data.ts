@@ -24,7 +24,7 @@ export const machines = {
     {
       id: 4,
       name: "Olimpic flat bench",
-      startingResistance: 0,
+      startingResistance: 20,
       seatingLevel: "",
       image: "/gym-app/machines/chest/chest4.webp",
     },

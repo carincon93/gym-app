@@ -257,7 +257,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     {machineSelected?.startingResistance ? (
                       <small className="text-[10px] block">
                         Starting resistance:{" "}
-                        {machineSelected.startingResistance}
+                        {machineSelected.startingResistance} (Kg)
                       </small>
                     ) : (
                       <></>
@@ -389,19 +389,19 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
           </form>
           <DialogFooter>
             <div className="flex justify-between items-center w-full">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
 
-            <Button
-              type="submit"
-              form="machine-form"
-              disabled={!selectedWeek?.lastDayOfWeek}
-            >
-              Save and rest
-            </Button>
+              <Button
+                type="submit"
+                form="machine-form"
+                disabled={!selectedWeek?.lastDayOfWeek}
+              >
+                Save and rest
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
