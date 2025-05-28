@@ -270,7 +270,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
               <div>
                 <div className="relative">
                   <small
-                    className={`absolute left-0 bottom-[26px] ${
+                    className={`absolute left-0 bottom-0 text-[10px] ${
                       records.length === 0 && "hidden"
                     }`}
                   >
@@ -296,12 +296,11 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
                 <div className="relative mt-4">
                   <small
-                    className={`absolute left-0 bottom-[15px] ${
+                    className={`absolute left-0 bottom-0 text-[10px] ${
                       records.length === 0 && "hidden"
                     }`}
                   >
-                    Weight <br />
-                    (Kg)
+                    Weight (Kg)
                   </small>
                   <div className="flex space-x-1 items-end justify-center">
                     {records.slice(-10).map((record) => (
@@ -323,7 +322,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
                 <div className="relative mt-4">
                   <small
-                    className={`absolute left-0 bottom-0 ${
+                    className={`absolute left-0 bottom-0 text-[10px] ${
                       records.length === 0 && "hidden"
                     }`}
                   >
