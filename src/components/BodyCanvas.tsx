@@ -277,7 +277,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     Reps
                   </small>
                   <div className="flex space-x-1 items-end justify-center pl-4">
-                    {records.slice(-15).map((record) => (
+                    {records.slice(-10).map((record) => (
                       <div
                         key={`rep-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
@@ -296,14 +296,15 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
 
                 <div className="relative mt-4">
                   <small
-                    className={`absolute left-0 bottom-[19px] ${
+                    className={`absolute left-0 bottom-[15px] ${
                       records.length === 0 && "hidden"
                     }`}
                   >
-                    Weight (Kg)
+                    Weight <br />
+                    (Kg)
                   </small>
                   <div className="flex space-x-1 items-end justify-center pl-4">
-                    {records.slice(-15).map((record) => (
+                    {records.slice(-10).map((record) => (
                       <div
                         key={`weight-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
@@ -328,15 +329,13 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                   >
                     Date
                   </small>
-                  <div className="flex space-x-1 items-end justify-center pl-4">
+                  <div className="flex items-end justify-center pl-4">
                     {records.slice(-15).map((record) => (
                       <div
                         key={`weight-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
                       >
-                        <div
-                          className={`w-4  flex justify-center select-none`}
-                        />
+                        <div className={`flex justify-center select-none`} />
                         <small className="block text-center text-[8px] -rotate-90">
                           {record.id
                             ? new Date(record.id).toLocaleDateString("en-GB", {
