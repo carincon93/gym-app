@@ -334,6 +334,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                       <div
                         key={`weight-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
+                        style={{ margin: "0 2px" }}
                       >
                         <div className={`flex justify-center select-none`} />
                         <small className="block text-center text-[8px] -rotate-90 w-[16px]">
