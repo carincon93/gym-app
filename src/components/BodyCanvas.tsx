@@ -336,7 +336,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                         onClick={() => handleSelectedRecord(record)}
                       >
                         <div className={`flex justify-center select-none`} />
-                        <small className="block text-center text-[8px] -rotate-90">
+                        <small className="block text-center text-[8px] -rotate-90 w-[16px]">
                           {record.id
                             ? new Date(record.id).toLocaleDateString("en-GB", {
                                 day: "2-digit",
