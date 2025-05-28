@@ -330,7 +330,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                     Date
                   </small>
                   <div className="flex items-end justify-center pl-4">
-                    {records.slice(-15).map((record) => (
+                    {records.slice(-10).map((record) => (
                       <div
                         key={`weight-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
