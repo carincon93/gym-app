@@ -4,7 +4,7 @@ import { openDB } from "./connection.service";
 const STORE_NAME = "treadmill";
 
 export const getTreadmillRecords = async (): Promise<Treadmill[]> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   return new Promise((resolve) => {
     const transaction = db.transaction(STORE_NAME, "readonly");
     const store = transaction.objectStore(STORE_NAME);
@@ -22,7 +22,7 @@ export const getTreadmillRecords = async (): Promise<Treadmill[]> => {
 export const addTreadmillRecord = async (
   treadmill: Treadmill
 ): Promise<Treadmill> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   await store.add(treadmill);
@@ -33,7 +33,7 @@ export const addTreadmillRecord = async (
 export const updateTreadmillRecord = async (
   treadmill: Treadmill
 ): Promise<Treadmill> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   store.put(treadmill);
@@ -42,7 +42,7 @@ export const updateTreadmillRecord = async (
 };
 
 export const deleteTreadmillRecord = async (treadmill: Treadmill) => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
   store.delete(treadmill.id);

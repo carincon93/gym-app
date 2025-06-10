@@ -4,7 +4,7 @@ import { openDB } from "./connection.service";
 const STORE_NAME = "maxgymtime";
 
 export const getMaxGymTime = async (): Promise<MaxGymTime> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   return new Promise((resolve) => {
     const transaction = db.transaction(STORE_NAME, "readonly");
     const store = transaction.objectStore(STORE_NAME);
@@ -17,7 +17,7 @@ export const getMaxGymTime = async (): Promise<MaxGymTime> => {
 };
 
 export const addMaxGymTime = async (): Promise<MaxGymTime> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 

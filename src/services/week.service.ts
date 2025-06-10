@@ -38,7 +38,7 @@ const getMondayMilliseconds = (): number => {
 };
 
 export const getWeek = async (): Promise<Week> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   return new Promise((resolve) => {
     const transaction = db.transaction(STORE_NAME, "readonly");
     const store = transaction.objectStore(STORE_NAME);
@@ -51,7 +51,7 @@ export const getWeek = async (): Promise<Week> => {
 };
 
 export const getAllWeeks = async (): Promise<Week[]> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   return new Promise((resolve) => {
     const transaction = db.transaction(STORE_NAME, "readonly");
     const store = transaction.objectStore(STORE_NAME);
@@ -63,7 +63,7 @@ export const getAllWeeks = async (): Promise<Week[]> => {
 };
 
 export const addWeek = async (currentWeek: Week): Promise<Week> => {
-  const db = await openDB(STORE_NAME);
+  const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 
