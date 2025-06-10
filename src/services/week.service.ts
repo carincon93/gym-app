@@ -67,21 +67,54 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 
-  const firstDayOfWeek = getMondayMilliseconds();
-  const lastDayOfWeek = endOfDayUtc5(firstDayOfWeek + 518400000);
-
-  if (!lastDayOfWeek) return currentWeek;
-
-  const now = Date.now();
-
-  if (Number(currentWeek.lastDayOfWeek) > now && now < lastDayOfWeek)
-    return currentWeek;
-
-  const week = {
+  const week1 = {
     id: Date.now(),
-    firstDayOfWeek: firstDayOfWeek,
-    lastDayOfWeek: lastDayOfWeek ?? firstDayOfWeek + 518400000,
+    firstDayOfWeek: 1747022400000,
+    lastDayOfWeek: 1747627199000,
   };
+  await store.add(week1);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // const week2 = {
+  //   id: Date.now(),
+  //   firstDayOfWeek: 1747708800000,
+  //   lastDayOfWeek: 1748313599000,
+  // };
+  // await store.add(week2);
+  // await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // const week3 = {
+  //   id: Date.now(),
+  //   firstDayOfWeek: 1748395200000,
+  //   lastDayOfWeek: 1748999999000,
+  // };
+  // await store.add(week3);
+  // await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // const week4 = {
+  //   id: Date.now(),
+  //   firstDayOfWeek: 1749081600000,
+  //   lastDayOfWeek: 1749686399000,
+  // };
+  // await store.add(week4);
+
+  return week1;
+
+  // const firstDayOfWeek = getMondayMilliseconds();
+  // const lastDayOfWeek = endOfDayUtc5(firstDayOfWeek + 518400000);
+
+  // if (!lastDayOfWeek) return currentWeek;
+
+  // const now = Date.now();
+
+  // if (Number(currentWeek?.lastDayOfWeek) > now && now < lastDayOfWeek)
+  //   return currentWeek;
+
+  // const week = {
+  //   id: Date.now(),
+  //   firstDayOfWeek: firstDayOfWeek,
+  //   lastDayOfWeek: lastDayOfWeek ?? firstDayOfWeek + 518400000,
+  // };
 
   // const week = {
   //   id: Date.now(),
@@ -89,7 +122,7 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
   //   lastDayOfWeek: 1748718212481,
   // };
 
-  store.add(week);
+  // store.add(week);
 
-  return week;
+  // return week;
 };
