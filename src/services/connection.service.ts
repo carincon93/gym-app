@@ -22,6 +22,16 @@ export const openDB = (STORE_NAME: string): Promise<IDBDatabase> => {
           keyPath: "id",
           autoIncrement: true,
         });
+
+        db.createObjectStore("treadmill", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+
+        db.createObjectStore("climbmill", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
       }
     };
 

@@ -3,8 +3,22 @@ import { openDB } from "./connection.service";
 
 const STORE_NAME = "records";
 
-export const getRecords = async (
-  machine: Machine | null
+export const getRecords = async (): Promise<Record[]> => {
+  const db = await openDB(STORE_NAME);
+  return new Promise((resolve) => {
+    const transaction = db.transaction(STORE_NAME, "readonly");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+    // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
+    request.onsuccess = () => {
+      const allRecords = request.result;
+      resolve(allRecords.toSorted((a, b) => a.id - b.id));
+    };
+  });
+};
+
+export const getRecordsByMachine = async (
+  machine: Machine
 ): Promise<Record[]> => {
   const db = await openDB(STORE_NAME);
   return new Promise((resolve) => {
@@ -14,9 +28,9 @@ export const getRecords = async (
     // Since IndexedDB doesn't support filtering directly, we'll need to filter after getting results
     request.onsuccess = () => {
       const allRecords = request.result;
-      const filteredRecords = machine
-        ? allRecords.filter((record) => record.machineId === machine?.id)
-        : allRecords;
+      const filteredRecords = allRecords.filter(
+        (record) => record.machineId === machine?.id
+      );
       resolve(filteredRecords.toSorted((a, b) => a.id - b.id));
     };
   });

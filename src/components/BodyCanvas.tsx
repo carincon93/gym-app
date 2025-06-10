@@ -18,6 +18,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+import Treadmill from "@/components/icons/Treadmill";
+import Climbmill from "@/components/icons/Climbmill";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -27,16 +41,24 @@ import {
   getRecords,
   deleteRecord,
   updateRecord,
+  getRecordsByMachine,
 } from "@/services/records.service";
-import type { Machine, Record, Week } from "@/lib/types";
-// import { Play } from "lucide-react";
-import { showStopWatch, checkIfWeekSelected } from "@/stores/gymStore";
+import type { Machine, MaxGymTime, Record, Week } from "@/lib/types";
+import { showStopWatch } from "@/stores/gymStore";
+import Loading from "./Loader";
+import { addWeek, getWeek } from "@/services/week.service";
+import { Calendar, ClockArrowDown } from "lucide-react";
+import { addMaxGymTime, getMaxGymTime } from "@/services/maxtime.service";
+import FullBodyCanvas from "./WeeklySummary";
+import { deleteDB } from "@/services/connection.service";
+import { toast } from "sonner";
+import ClimbmillDialog from "./ClimbmillDialog";
+import TreadmillDialog from "./TreadmillDialog";
 
-type BodyCanvasProps = {
-  canvasId: string;
-};
+type BodyCanvasProps = {};
 
-export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
+export default function BodyCanvas({}: BodyCanvasProps) {
+  const riveRef = useRef<rive.Rive | null>(null);
   const [muscleSelected, setMuscleSelected] = useState<string>("");
   const [machineSelected, setMachineSelected] = useState<Machine>();
   const [openMachineDialog, setOpenMachineDialog] = useState<boolean>(false);
@@ -44,67 +66,163 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
   const [records, setRecords] = useState<Record[]>([]);
   const [selectedWeek, setSelectedWeek] = useState<Week>();
   const [openUpdateDialog, setOpenUpdateDialog] = useState<boolean>(false);
+  const [openSummaryDialog, setOpenSummaryDialog] = useState<boolean>(false);
+  const [openResetDialog, setOpenResetDialog] = useState<boolean>(false);
+  const [openClimbmillDialog, setOpenClimbmillDialog] =
+    useState<boolean>(false);
+  const [openTreadmillDialog, setOpenTreadmillDialog] =
+    useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<Record>();
-  const riveRef = useRef<rive.Rive | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [daySelected, setDaySelected] = useState<string | undefined>("");
+  const [maxGymTime, setMaxGymTime] = useState<MaxGymTime>();
+  const [elapsedTime, setElapsedTime] = useState<string>("");
 
   // Función para crear instancias de animaciones Rive
-  const createRiveInstance = () => {
+  const createRiveInstance = (artboard: string) => {
+    setLoading(true);
+
+    setDaySelected(artboard.split(" ").at(-1));
+
     const canvasElement: HTMLCanvasElement | null = document.getElementById(
-      canvasId
+      "full-body-canvas"
     ) as HTMLCanvasElement | null;
 
     if (!canvasElement) {
-      console.error(`Canvas with id "${canvasId}" not found.`);
+      console.error(`Canvas with id full-body-canvas not found.`);
       return;
     }
 
     try {
-      const instance = new rive.Rive({
+      const riveInstance = new rive.Rive({
         canvas: canvasElement,
         autoplay: true,
         stateMachines: "State Machine 1",
-        src:
-          canvasId === "canvas-front-body"
-            ? "/gym-app/animations/front-body.riv"
-            : "/gym-app/animations/back-body.riv",
+        src: "/gym-app/animations/upper-lower.riv",
+        artboard: artboard,
+        autoBind: true,
+        layout: new rive.Layout({
+          alignment: rive.Alignment.BottomCenter,
+        }),
+
         onStateChange: (e) => {
           const name = Array.isArray(e?.data) ? e.data[0] : "";
-          if (name.includes("Initial")) return;
+          if (name.includes("Initial") || name.includes("Timeline")) return;
 
           setMuscleSelected(name);
+          setOpenDrawer(true);
+        },
 
-          if (!name.includes("Initial")) {
-            setOpenDrawer(true);
-          }
+        onLoad: () => {
+          setLoading(false);
+
+          // The Rive object is now loaded and ready to use.
+          const vmi = riveInstance.viewModelInstance;
+
+          const setStringProperty = (propertyName: string, value: string) => {
+            const property = vmi?.string(propertyName);
+            if (property) {
+              property.value = value;
+            }
+          };
+
+          const mrv = (machineIds: string[]) =>
+            records.filter((record) =>
+              machineIds.includes(record.machineId.toString())
+            );
+
+          const chest = mrv(["1", "2", "3", "4", "5", "6"]);
+          const quads = mrv(["7", "8", "9", "10"]);
+          const abs = mrv(["11", "12"]);
+          const obliques = mrv(["13"]);
+          const biceps = mrv(["14", "15", "16", "17", "18", "53"]);
+          const shoulders = mrv(["19", "20", "21", "22"]);
+          const forearms = mrv(["23", "24"]);
+          const adductors = mrv(["25"]);
+          const calves = mrv(["26", "27", "28"]);
+          const traps = mrv(["29", "30"]);
+          const neck = mrv(["31", "32"]);
+          const hips = mrv(["33", "34", "35", "36"]);
+          const hamstrings = mrv(["37", "38"]);
+          const glutes = mrv(["39", "40", "41"]);
+          const lats = mrv(["42", "43", "44", "45", "46", "47", "54", "55"]);
+          const triceps = mrv(["48", "49", "50", "51"]);
+          const lowerBack = mrv(["52"]);
+
+          const muscleMap = {
+            bicepsTxt: biceps,
+            trapsTxt: traps,
+            hipsTxt: hips,
+            adductorsTxt: adductors,
+            calvesTxt: calves,
+            quadsTxt: quads,
+            neckTxt: neck,
+            shouldersTxt: shoulders,
+            chestTxt: chest,
+            obliquesTxt: obliques,
+            absTxt: abs,
+            forearmsTxt: forearms,
+            hamstringsTxt: hamstrings,
+            glutesTxt: glutes,
+            lowerBackTxt: lowerBack,
+            tricepsTxt: triceps,
+            latsTxt: lats,
+          };
+
+          Object.entries(muscleMap).forEach(([property, muscle]) => {
+            setStringProperty(property, muscle.length.toString());
+          });
         },
       });
 
-      riveRef.current = instance;
+      riveRef.current = riveInstance;
     } catch (error) {
       console.error(
-        `Error initializing Rive animation for ${canvasId}:`,
+        `Error initializing Rive animation for full-body-canvas:`,
         error
       );
     }
   };
 
-  const triggerZoomOut = () => {
+  const initRiveInstance = () => {
+    const today = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+    ).toLocaleDateString("en-US", { weekday: "short" });
+
+    if (today === "Mon") {
+      createRiveInstance(`Upper A - Monday`);
+    } else if (today === "Tue") {
+      createRiveInstance(`Upper A - Tuesday`);
+    } else if (today === "Wed") {
+      createRiveInstance(`Lower A - Wednesday`);
+    } else if (today === "Fri") {
+      createRiveInstance(`Upper B - Friday`);
+    } else if (today === "Sat") {
+      createRiveInstance(`Upper B - Saturday`);
+    } else if (today === "Sun") {
+      createRiveInstance(`Lower B - Sunday`);
+    }
+  };
+
+  const fireCloseDrawer = () => {
+    setMuscleSelected("");
+
     const riveInstance = riveRef.current;
     if (!riveInstance) return;
 
     const inputs = riveInstance.stateMachineInputs("State Machine 1");
-    const zoomOutInput = inputs.find((input) => input.name === "ClickZoomOut");
+    const CloseDrawerInput = inputs?.find(
+      (input) => input.name === "CloseDrawer"
+    );
 
-    if (zoomOutInput && zoomOutInput?.type.toString() === "58") {
-      zoomOutInput.fire();
+    if (CloseDrawerInput && CloseDrawerInput?.type.toString() === "58") {
+      CloseDrawerInput.fire();
     }
-
-    setMuscleSelected("");
   };
 
   const handleMachineSelected = (machine: Machine) => {
     setMachineSelected(machine);
-    getRecords(machine).then(setRecords);
+    getRecordsByMachine(machine).then(setRecords);
     setOpenMachineDialog(true);
   };
 
@@ -177,25 +295,90 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
     setSelectedRecord(undefined);
   };
 
-  useEffect(() => {
-    checkIfWeekSelected().then(setSelectedWeek);
-    setTimeout(() => {
-      createRiveInstance();
-    }, 1000);
-  }, []);
+  const handleWeek = async () => {
+    const currentWeekDb = await getWeek();
+
+    await addWeek(currentWeekDb).then(setSelectedWeek);
+  };
+
+  const handleAddMaxTime = async () => {
+    await addMaxGymTime().then(setMaxGymTime);
+  };
+
+  const handleRemoveDb = async () => {
+    await deleteDB();
+    getWeek().then(setSelectedWeek);
+    getMaxGymTime().then(setMaxGymTime);
+
+    toast("DB deleted.");
+  };
+
+  const formatDate = (date: number) => {
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+    });
+  };
 
   useEffect(() => {
     if (!openDrawer) {
-      triggerZoomOut();
       setOpenDrawer(false);
+      fireCloseDrawer();
+      initRiveInstance();
     }
   }, [openDrawer]);
 
+  useEffect(() => {
+    if (!maxGymTime) return;
+
+    const updateElapsedTime = () => {
+      const elapsed = maxGymTime.maxTime - Date.now();
+      if (elapsed <= 0) {
+        setElapsedTime("");
+        return;
+      }
+      const hours = Math.floor(elapsed / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+      setElapsedTime(
+        `${hours.toString().padStart(2, "0")} hr ${minutes
+          .toString()
+          .padStart(2, "0")} min`
+      );
+    };
+
+    updateElapsedTime();
+    const interval = setInterval(updateElapsedTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [maxGymTime]);
+
+  useEffect(() => {
+    if (!selectedWeek) return;
+
+    getRecords().then((records) => {
+      setRecords(
+        records.filter(
+          (record) =>
+            record.id > Number(selectedWeek?.firstDayOfWeek) &&
+            record.id < Number(selectedWeek?.lastDayOfWeek)
+        )
+      );
+    });
+  }, [selectedWeek]);
+
+  useEffect(() => {
+    if (records.length === 0) return;
+
+    initRiveInstance();
+    getMaxGymTime().then(setMaxGymTime);
+  }, [records]);
+
+  useEffect(() => {
+    handleWeek();
+  }, []);
+
   return (
-    <div
-      className="-translate-y-20"
-      id={canvasId === "canvas-front-body" ? "front" : "back"}
-    >
+    <div>
       <Drawer
         open={openDrawer}
         onOpenChange={setOpenDrawer}
@@ -268,6 +451,12 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
             </DialogTitle>
             <DialogDescription asChild>
               <div>
+                {records.slice(-10).every((record) => record.reps >= 12) &&
+                  records.length > 0 && (
+                    <small className="py-1 px-2 bg-red-400 text-white inline-block rounded-md mb-2">
+                      Time to increase weight
+                    </small>
+                  )}
                 <div className="relative">
                   <small
                     className={`absolute left-0 bottom-0 text-[10px] ${
@@ -354,6 +543,7 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
           <form
             id="machine-form"
             className="space-x-2 grid grid-cols-2"
+            autoFocus={false}
             onSubmit={handleAddFormSubmit}
           >
             <fieldset>
@@ -366,7 +556,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                 type="number"
                 min="0"
                 autoComplete="off"
-                disabled={!selectedWeek?.lastDayOfWeek}
                 required
               />
             </fieldset>
@@ -382,7 +571,6 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
                 min="0"
                 step="0.1"
                 autoComplete="off"
-                disabled={!selectedWeek?.lastDayOfWeek}
                 required
               />
             </fieldset>
@@ -480,8 +668,151 @@ export default function BodyCanvas({ canvasId }: BodyCanvasProps) {
         </DialogContent>
       </Dialog>
 
-      <div className="flex flex-col justify-center items-center">
-        <canvas className="mask-fade" id={canvasId} width="390" height="844" />
+      <div className="flex flex-col justify-between items-center min-h-[100svh]">
+        <div className="grid grid-cols-6 w-full mb-4">
+          <Button
+            onClick={() => createRiveInstance("Upper A - Monday")}
+            className={`text-xs w-full ${
+              daySelected === "Monday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Monday"}
+          >
+            Mon
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Upper A - Tuesday")}
+            className={`text-xs w-full ${
+              daySelected === "Tuesday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Tuesday"}
+          >
+            Tue
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Lower A - Wednesday")}
+            className={`text-xs w-full ${
+              daySelected === "Wednesday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Wednesday"}
+          >
+            Wed
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Upper B - Friday")}
+            className={`text-xs w-full ${
+              daySelected === "Friday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Friday"}
+          >
+            Fri
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Upper B - Saturday")}
+            className={`text-xs w-full ${
+              daySelected === "Saturday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Saturday"}
+          >
+            Sat
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Lower B - Sunday")}
+            className={`text-xs w-full ${
+              daySelected === "Sunday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase`}
+            disabled={daySelected !== "Sunday"}
+          >
+            Sun
+          </Button>
+        </div>
+
+        {loading && (
+          <Loading className="text-violet-900 dark:text-white absolute inset-0 z-50 h-[100svh] flex items-center justify-center" />
+        )}
+        <FullBodyCanvas
+          openSummaryDialog={openSummaryDialog}
+          setOpenSummaryDialog={setOpenSummaryDialog}
+        />
+        <canvas id="full-body-canvas" width={390} height={360} />
+        <div className="flex-1 size-full flex flex-col items-center justify-center space-y-5">
+          {selectedWeek && (
+            <>
+              <div className="flex items-center bg-white rounded-md shadow p-2">
+                <strong className="mr-2 flex items-center gap-1">
+                  <Calendar />
+                  Week:
+                </strong>
+                {formatDate(Number(selectedWeek?.firstDayOfWeek))} -{" "}
+                {formatDate(Number(selectedWeek?.lastDayOfWeek))}
+              </div>
+
+              {elapsedTime ? (
+                <span className="flex gap-2 bg-white rounded-md shadow p-2">
+                  <ClockArrowDown />
+                  {elapsedTime}
+                </span>
+              ) : (
+                <Button
+                  onClick={handleAddMaxTime}
+                  className="bg-green-500 hover:bg-green-600"
+                >
+                  Start session
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      <AlertDialog open={openResetDialog} onOpenChange={setOpenResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemoveDb}>
+              Reset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <ClimbmillDialog
+        openClimbmillDialog={openClimbmillDialog}
+        setOpenClimbmillDialog={setOpenClimbmillDialog}
+      />
+
+      <TreadmillDialog
+        openTreadmillDialog={openTreadmillDialog}
+        setOpenTreadmillDialog={setOpenTreadmillDialog}
+      />
+
+      <div className="fixed bottom-4 left-0 right-0 px-2 w-full flex justify-between items-center">
+        <Button variant="destructive" onClick={() => setOpenResetDialog(true)}>
+          Reset
+        </Button>
+
+        <Button onClick={() => setOpenTreadmillDialog(true)}>
+          <Treadmill />
+        </Button>
+
+        <Button onClick={() => setOpenClimbmillDialog(true)}>
+          <Climbmill />
+        </Button>
+
+        <Button onClick={() => setOpenSummaryDialog(true)}>
+          Weekly summary
+        </Button>
       </div>
     </div>
   );

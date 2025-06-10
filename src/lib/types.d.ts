@@ -17,11 +17,25 @@ export type Machine = {
 export type MaxGymTime = {
   id: number;
   startTime: number;
-  maxTime: Object;
+  maxTime: number;
 };
 
 export type Week = {
   id: number;
   firstDayOfWeek: string | number | Date;
   lastDayOfWeek: string | number | Date;
+};
+
+export type Treadmill = {
+  id: number;
+  inclineRange: number;
+  speed: number;
+  time: number;
+};
+
+export type Climbmill = {
+  id: number;
+  stairs: number;
+  speed: number;
+  time: number;
 };

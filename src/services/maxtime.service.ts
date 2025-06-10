@@ -16,14 +16,15 @@ export const getMaxGymTime = async (): Promise<MaxGymTime> => {
   });
 };
 
-export const addMaxGymTime = async () => {
+export const addMaxGymTime = async (): Promise<MaxGymTime> => {
   const db = await openDB(STORE_NAME);
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 
-  const timestamp = Date.now();
-  const startTime = new Date(timestamp);
-  const utc5MaxGymTime = new Date(timestamp + 5400000);
+  const startTime = Date.now();
+  const maxGymTime = startTime + 5400000;
 
-  store.add({ startTime: startTime, maxTime: utc5MaxGymTime });
+  await store.add({ startTime: startTime, maxTime: maxGymTime });
+
+  return { id: startTime, startTime: startTime, maxTime: maxGymTime };
 };
