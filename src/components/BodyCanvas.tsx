@@ -297,6 +297,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
       (oldRecord) => oldRecord.id !== record.id
     );
     setRecords(newRecords);
+    setWeekRecords(newRecords);
 
     await deleteRecord(record);
     setOpenUpdateDialog(false);
