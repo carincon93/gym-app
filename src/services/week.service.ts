@@ -70,7 +70,11 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
   const firstDayOfWeek = getMondayMilliseconds();
   const lastDayOfWeek = endOfDayUtc5(firstDayOfWeek + 518400000);
 
-  if (currentWeek && lastDayOfWeek && Date.now() < lastDayOfWeek)
+  if (!lastDayOfWeek) return currentWeek;
+
+  const now = Date.now();
+
+  if (Number(currentWeek.lastDayOfWeek) > now && now < lastDayOfWeek)
     return currentWeek;
 
   const week = {
@@ -81,8 +85,8 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
 
   // const week = {
   //   id: Date.now(),
-  //   firstDayOfWeek: 1748902800000,
-  //   lastDayOfWeek: 1749421200000,
+  //   firstDayOfWeek: 1748113412481,
+  //   lastDayOfWeek: 1748718212481,
   // };
 
   store.add(week);
