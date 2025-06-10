@@ -8,27 +8,7 @@ export const openDB = (STORE_NAME: string): Promise<IDBDatabase> => {
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore("records", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-
-        db.createObjectStore("maxgymtime", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-
-        db.createObjectStore("weeks", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-
-        db.createObjectStore("treadmill", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-
-        db.createObjectStore("climbmill", {
+        db.createObjectStore(STORE_NAME, {
           keyPath: "id",
           autoIncrement: true,
         });
