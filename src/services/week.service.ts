@@ -67,21 +67,14 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
 
-  const week3 = {
+  const week4 = {
     id: Date.now(),
-    firstDayOfWeek: 1748235600000,
-    lastDayOfWeek: 1748840399000,
+    firstDayOfWeek: 1748840400000,
+    lastDayOfWeek: 1749445199000,
   };
-  await store.add(week3);
+  await store.add(week4);
 
-  // const week4 = {
-  //   id: Date.now(),
-  //   firstDayOfWeek: 1748840400000,
-  //   lastDayOfWeek: 1749445199000,
-  // };
-  // await store.add(week4);
-
-  return week3;
+  return week4;
 
   // const firstDayOfWeek = getMondayMilliseconds();
   // const lastDayOfWeek = endOfDayUtc5(firstDayOfWeek + 518400000);
