@@ -64,6 +64,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   const [openMachineDialog, setOpenMachineDialog] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [records, setRecords] = useState<Record[]>([]);
+  const [weekRecords, setWeekRecords] = useState<Record[]>([]);
   const [selectedWeek, setSelectedWeek] = useState<Week>();
   const [openUpdateDialog, setOpenUpdateDialog] = useState<boolean>(false);
   const [openSummaryDialog, setOpenSummaryDialog] = useState<boolean>(false);
@@ -127,8 +128,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
           };
 
           const mrv = (machineIds: string[]) =>
-            records.filter((record) =>
-              machineIds.includes(record.machineId.toString())
+            weekRecords.filter((weekRecord) =>
+              machineIds.includes(weekRecord.machineId.toString())
             );
 
           const chest = mrv(["1", "2", "3", "4", "5", "6"]);
@@ -218,6 +219,13 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     if (CloseDrawerInput && CloseDrawerInput?.type.toString() === "58") {
       CloseDrawerInput.fire();
     }
+  };
+
+  const formatDate = (date: number) => {
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+    });
   };
 
   const handleMachineSelected = (machine: Machine) => {
@@ -313,13 +321,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     toast("DB deleted.");
   };
 
-  const formatDate = (date: number) => {
-    return new Date(date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-    });
-  };
-
   useEffect(() => {
     if (!openDrawer) {
       setOpenDrawer(false);
@@ -356,7 +357,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     if (!selectedWeek) return;
 
     getRecords().then((records) => {
-      setRecords(
+      setWeekRecords(
         records.filter(
           (record) =>
             record.id > Number(selectedWeek?.firstDayOfWeek) &&
@@ -367,11 +368,11 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   }, [selectedWeek]);
 
   useEffect(() => {
-    if (records.length === 0) return;
+    if (weekRecords.length === 0) return;
 
     initRiveInstance();
     getMaxGymTime().then(setMaxGymTime);
-  }, [records]);
+  }, [weekRecords]);
 
   useEffect(() => {
     handleWeek();
