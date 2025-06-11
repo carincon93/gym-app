@@ -79,6 +79,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/quads/quads4.webp",
     },
+    {
+      id: 59,
+      name: "Hammer Leg press",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/quads/quads5.webp",
+    },
   ],
   Abs: [
     {
@@ -136,7 +143,7 @@ export const machines = {
     },
     {
       id: 18,
-      name: "Aura functional trainer",
+      name: "Straight bar",
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/biceps/biceps5.webp",
@@ -230,7 +237,7 @@ export const machines = {
   Traps: [
     {
       id: 29,
-      name: "Iron disc",
+      name: "Aura Lat pulldown",
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/traps/traps1.webp",
@@ -241,6 +248,27 @@ export const machines = {
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/traps/traps2.webp",
+    },
+    {
+      id: 57,
+      name: "Face pull",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/traps/traps3.webp",
+    },
+    {
+      id: 61,
+      name: "Seated row",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/traps/traps4.webp",
+    },
+    {
+      id: 62,
+      name: "Aura low row",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/traps/traps5.webp",
     },
   ],
   Neck: [
@@ -323,7 +351,7 @@ export const machines = {
     {
       id: 41,
       name: "Hip trust",
-      startingResistance: 0,
+      startingResistance: 22.5,
       seatingLevel: "",
       image: "/gym-app/machines/glutes/glutes3.webp",
     },
@@ -385,6 +413,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/lats/lats8.webp",
     },
+    {
+      id: 58,
+      name: "Rope Lat pulldown",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/lats/lats9.webp",
+    },
   ],
   Triceps: [
     {
@@ -415,6 +450,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/triceps/triceps4.webp",
     },
+    {
+      id: 60,
+      name: "Straight bar triceps pressdown",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/triceps/triceps5.webp",
+    },
   ],
   LowerBack: [
     {
@@ -428,7 +470,7 @@ export const machines = {
 };
 
 const chestMachineIds = ["1", "2", "3", "4", "5", "6", "56"];
-const quadsMachineIds = ["7", "8", "9", "10"];
+const quadsMachineIds = ["7", "8", "9", "10", "59"];
 const absMachineIds = ["11", "12"];
 const obliquesMachineIds = ["13"];
 const bicepsMachineIds = ["14", "15", "16", "17", "18", "53"];
@@ -436,13 +478,13 @@ const shouldersMachineIds = ["19", "20", "21", "22"];
 const forearmsMachineIds = ["23", "24"];
 const adductorsMachineIds = ["25"];
 const calvesMachineIds = ["26", "27", "28"];
-const trapsMachineIds = ["29", "30"];
+const trapsMachineIds = ["29", "30", "57", "61", "62"];
 const neckMachineIds = ["31", "32"];
 const hipsMachineIds = ["33", "34", "35", "36"];
 const hamstringsMachineIds = ["37", "38"];
 const glutesMachineIds = ["39", "40", "41"];
-const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55"];
-const tricepsMachineIds = ["48", "49", "50", "51"];
+const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55", "58"];
+const tricepsMachineIds = ["48", "49", "50", "51", "60"];
 const lowerBackMachineIds = ["52"];
 
 export {
