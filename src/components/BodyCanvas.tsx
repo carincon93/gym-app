@@ -352,6 +352,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   useEffect(() => {
     if (!maxGymTime) return;
 
+    console.log(maxGymTime);
+
     const updateElapsedTime = () => {
       const elapsed = maxGymTime.maxTime - Date.now();
       if (elapsed <= 0) {
@@ -377,6 +379,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     if (!selectedWeek) return;
 
     initRiveInstance();
+    getMaxGymTime().then(setMaxGymTime);
 
     getRecords().then((records) => {
       setWeekRecords(
@@ -393,7 +396,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     if (weekRecords.length === 0) return;
 
     initRiveInstance();
-    getMaxGymTime().then(setMaxGymTime);
   }, [weekRecords]);
 
   useEffect(() => {
