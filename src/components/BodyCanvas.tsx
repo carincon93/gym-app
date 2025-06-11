@@ -789,8 +789,12 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                 >
                   {elapsedTime ? <RefreshCw /> : <Play />}
                 </Button>
-                <ClockArrowDown />
-                {elapsedTime}
+                {elapsedTime && (
+                  <>
+                    <ClockArrowDown />
+                    {elapsedTime}
+                  </>
+                )}
               </span>
             </>
           )}
