@@ -352,8 +352,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   useEffect(() => {
     if (!maxGymTime) return;
 
-    console.log(maxGymTime);
-
     const updateElapsedTime = () => {
       const elapsed = maxGymTime.maxTime - Date.now();
       if (elapsed <= 0) {
@@ -484,6 +482,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                       </small>
                     </div>
                   )}
+
                 <div className="relative">
                   <small
                     className={`absolute left-0 bottom-0 text-[10px] ${
@@ -497,12 +496,13 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                       <div
                         key={`rep-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
+                        className="hover:opacity-60 cursor-pointer"
                       >
                         <div
                           className={`w-4 bg-green-400 flex justify-center`}
                           style={{ height: record.reps + "px" }}
                         />
-                        <small className="block text-center text-[8px]">
+                        <small className="block text-center text-[8px] select-none">
                           {record.reps}
                         </small>
                       </div>
@@ -523,12 +523,13 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                       <div
                         key={`weight-${record.id}`}
                         onClick={() => handleSelectedRecord(record)}
+                        className="hover:opacity-60 cursor-pointer"
                       >
                         <div
-                          className={`w-4 bg-amber-400 flex justify-center select-none`}
+                          className={`w-4 bg-amber-400 flex justify-center`}
                           style={{ height: record.weight / 1.5 + "px" }}
                         />
-                        <small className="block text-center text-[8px]">
+                        <small className="block text-center text-[8px] select-none">
                           {record.weight}
                         </small>
                       </div>
@@ -552,7 +553,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                         style={{ margin: "0 2px" }}
                       >
                         <div className={`flex justify-center select-none`} />
-                        <small className="block text-center text-[8px] -rotate-90 w-[16px]">
+                        <small className="block text-center text-[8px] -rotate-90 w-[16px] select-none">
                           {record.id
                             ? new Date(record.id).toLocaleDateString("en-GB", {
                                 day: "2-digit",
@@ -630,7 +631,69 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                 Modify record
               </div>
             </DialogTitle>
-            <DialogDescription asChild></DialogDescription>
+            <DialogDescription asChild>
+              {selectedRecord && (
+                <div>
+                  <div className="relative">
+                    <small className={`absolute left-0 bottom-0 text-[10px]`}>
+                      Reps
+                    </small>
+                    <div className="flex space-x-1 items-end justify-center">
+                      <div className="hover:opacity-60 cursor-pointer">
+                        <div
+                          className={`w-4 bg-green-400 flex justify-center`}
+                          style={{ height: selectedRecord?.reps + "px" }}
+                        />
+                        <small className="block text-center text-[8px] select-none">
+                          {selectedRecord?.reps}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative mt-4">
+                    <small className={`absolute left-0 bottom-0 text-[10px]`}>
+                      Weight (Kg)
+                    </small>
+                    <div className="flex space-x-1 items-end justify-center">
+                      <div className="hover:opacity-60 cursor-pointer">
+                        <div
+                          className={`w-4 bg-amber-400 flex justify-center`}
+                          style={{
+                            height: selectedRecord?.weight / 1.5 + "px",
+                          }}
+                        />
+                        <small className="block text-center text-[8px] select-none">
+                          {selectedRecord?.weight}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative mt-4">
+                    <small className={`absolute left-0 bottom-0 text-[10px]`}>
+                      Date
+                    </small>
+                    <div className="flex items-end justify-center">
+                      <div style={{ margin: "0 2px" }}>
+                        <div className={`flex justify-center select-none`} />
+                        <small className="block text-center text-[8px] -rotate-90 w-[16px] select-none">
+                          {selectedRecord?.id
+                            ? new Date(selectedRecord?.id).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                }
+                              )
+                            : ""}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </DialogDescription>
           </DialogHeader>
           <form
             id="update-form"
