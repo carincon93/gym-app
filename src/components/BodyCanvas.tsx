@@ -313,7 +313,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   };
 
   const handleDeleteRecord = async (record: Record) => {
-    const newRecords = records.filter(
+    const newRecords = weekRecords.filter(
       (oldRecord) => oldRecord.id !== record.id
     );
     setRecords(newRecords);
