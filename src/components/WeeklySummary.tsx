@@ -187,8 +187,8 @@ export default function WeeklySummary({
     if (weeks.length === 0) return;
 
     setWeekSelected({
-      firstDayOfWeek: weeks[0].firstDayOfWeek,
-      lastDayOfWeek: weeks[0].lastDayOfWeek,
+      firstDayOfWeek: weeks[weeks.length - 1].firstDayOfWeek,
+      lastDayOfWeek: weeks[weeks.length - 1].lastDayOfWeek,
     });
   }, [weeks]);
 
