@@ -42,6 +42,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/chest/chest6.webp",
     },
+    {
+      id: 56,
+      name: "Shoulder Press",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/chest/chest7.webp",
+    },
   ],
   Quads: [
     {
@@ -418,4 +425,42 @@ export const machines = {
       image: "/gym-app/machines/lowerback/lowerback1.webp",
     },
   ],
+};
+
+const chestMachineIds = ["1", "2", "3", "4", "5", "6", "56"];
+const quadsMachineIds = ["7", "8", "9", "10"];
+const absMachineIds = ["11", "12"];
+const obliquesMachineIds = ["13"];
+const bicepsMachineIds = ["14", "15", "16", "17", "18", "53"];
+const shouldersMachineIds = ["19", "20", "21", "22"];
+const forearmsMachineIds = ["23", "24"];
+const adductorsMachineIds = ["25"];
+const calvesMachineIds = ["26", "27", "28"];
+const trapsMachineIds = ["29", "30"];
+const neckMachineIds = ["31", "32"];
+const hipsMachineIds = ["33", "34", "35", "36"];
+const hamstringsMachineIds = ["37", "38"];
+const glutesMachineIds = ["39", "40", "41"];
+const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55"];
+const tricepsMachineIds = ["48", "49", "50", "51"];
+const lowerBackMachineIds = ["52"];
+
+export {
+  chestMachineIds,
+  quadsMachineIds,
+  absMachineIds,
+  obliquesMachineIds,
+  bicepsMachineIds,
+  shouldersMachineIds,
+  forearmsMachineIds,
+  adductorsMachineIds,
+  calvesMachineIds,
+  trapsMachineIds,
+  neckMachineIds,
+  hipsMachineIds,
+  hamstringsMachineIds,
+  glutesMachineIds,
+  latsMachineIds,
+  tricepsMachineIds,
+  lowerBackMachineIds,
 };

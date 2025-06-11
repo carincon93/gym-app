@@ -35,7 +35,26 @@ import Climbmill from "@/components/icons/Climbmill";
 import { Button } from "@/components/ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { machines } from "@/data/data";
+import {
+  absMachineIds,
+  adductorsMachineIds,
+  bicepsMachineIds,
+  calvesMachineIds,
+  chestMachineIds,
+  forearmsMachineIds,
+  glutesMachineIds,
+  hamstringsMachineIds,
+  hipsMachineIds,
+  latsMachineIds,
+  lowerBackMachineIds,
+  machines,
+  neckMachineIds,
+  obliquesMachineIds,
+  quadsMachineIds,
+  shouldersMachineIds,
+  trapsMachineIds,
+  tricepsMachineIds,
+} from "@/data/data";
 import {
   addRecord,
   getRecords,
@@ -132,23 +151,23 @@ export default function BodyCanvas({}: BodyCanvasProps) {
               machineIds.includes(weekRecord.machineId.toString())
             );
 
-          const chest = mrv(["1", "2", "3", "4", "5", "6"]);
-          const quads = mrv(["7", "8", "9", "10"]);
-          const abs = mrv(["11", "12"]);
-          const obliques = mrv(["13"]);
-          const biceps = mrv(["14", "15", "16", "17", "18", "53"]);
-          const shoulders = mrv(["19", "20", "21", "22"]);
-          const forearms = mrv(["23", "24"]);
-          const adductors = mrv(["25"]);
-          const calves = mrv(["26", "27", "28"]);
-          const traps = mrv(["29", "30"]);
-          const neck = mrv(["31", "32"]);
-          const hips = mrv(["33", "34", "35", "36"]);
-          const hamstrings = mrv(["37", "38"]);
-          const glutes = mrv(["39", "40", "41"]);
-          const lats = mrv(["42", "43", "44", "45", "46", "47", "54", "55"]);
-          const triceps = mrv(["48", "49", "50", "51"]);
-          const lowerBack = mrv(["52"]);
+          const chest = mrv(chestMachineIds);
+          const quads = mrv(quadsMachineIds);
+          const abs = mrv(absMachineIds);
+          const obliques = mrv(obliquesMachineIds);
+          const biceps = mrv(bicepsMachineIds);
+          const shoulders = mrv(shouldersMachineIds);
+          const forearms = mrv(forearmsMachineIds);
+          const adductors = mrv(adductorsMachineIds);
+          const calves = mrv(calvesMachineIds);
+          const traps = mrv(trapsMachineIds);
+          const neck = mrv(neckMachineIds);
+          const hips = mrv(hipsMachineIds);
+          const hamstrings = mrv(hamstringsMachineIds);
+          const glutes = mrv(glutesMachineIds);
+          const lats = mrv(latsMachineIds);
+          const triceps = mrv(tricepsMachineIds);
+          const lowerBack = mrv(lowerBackMachineIds);
 
           const muscleMap = {
             bicepsTxt: biceps,
@@ -279,6 +298,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
 
     await addRecord(newRecord);
     setRecords([...records, newRecord]);
+    setWeekRecords([...weekRecords, newRecord]);
   };
 
   const handleUpdateRecord = async (newRecord: Record) => {
@@ -326,7 +346,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     if (!openDrawer) {
       setOpenDrawer(false);
       fireCloseDrawer();
-      initRiveInstance();
     }
   }, [openDrawer]);
 
