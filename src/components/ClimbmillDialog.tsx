@@ -71,7 +71,7 @@ export default function ClimbmillDialog({
                   alt={`Machine Climbmill`}
                   className="bg-slate-100 rounded-md size-16 object-contain"
                 />
-                <h6>ClimbMill</h6>
+                <h6>Climbmill</h6>
               </div>
             </div>
           </DialogTitle>

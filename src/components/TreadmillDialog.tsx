@@ -71,7 +71,7 @@ export default function TreadmillDialog({
                   alt={`Machine Treadmill`}
                   className="bg-slate-100 rounded-md size-16 object-contain"
                 />
-                <h6>TreadMill</h6>
+                <h6>Treadmill</h6>
               </div>
             </div>
           </DialogTitle>

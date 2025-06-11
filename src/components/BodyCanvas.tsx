@@ -834,7 +834,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
         </Button>
 
         <Button onClick={() => setOpenSummaryDialog(true)}>
-          Weekly summary
+          Workout summary
         </Button>
       </div>
     </div>
