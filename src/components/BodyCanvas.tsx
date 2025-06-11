@@ -66,7 +66,7 @@ import type { Machine, MaxGymTime, Record, Week } from "@/lib/types";
 import { showStopWatch } from "@/stores/gymStore";
 import Loading from "./Loader";
 import { addWeek, getWeek } from "@/services/week.service";
-import { Calendar, ClockArrowDown, Play } from "lucide-react";
+import { Calendar, ClockArrowDown, Play, RefreshCw } from "lucide-react";
 import { addMaxGymTime, getMaxGymTime } from "@/services/maxtime.service";
 import FullBodyCanvas from "./WeeklySummary";
 import { deleteDB } from "@/services/connection.service";
@@ -787,7 +787,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                   onClick={handleAddMaxTime}
                   className="bg-green-500 hover:bg-green-600"
                 >
-                  <Play />
+                  {elapsedTime ? <RefreshCw /> : <Play />}
                 </Button>
                 <ClockArrowDown />
                 {elapsedTime}
