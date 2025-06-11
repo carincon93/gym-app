@@ -184,6 +184,15 @@ export default function WeeklySummary({
   };
 
   useEffect(() => {
+    if (weeks.length === 0) return;
+
+    setWeekSelected({
+      firstDayOfWeek: weeks[0].firstDayOfWeek,
+      lastDayOfWeek: weeks[0].lastDayOfWeek,
+    });
+  }, [weeks]);
+
+  useEffect(() => {
     if (!weekSelected) return;
 
     getRecords().then((records) =>
@@ -223,6 +232,7 @@ export default function WeeklySummary({
                 lastDayOfWeek: Number(value.split(",")[1]),
               });
             }}
+            defaultValue={weekSelected ? `${weekSelected.firstDayOfWeek},${weekSelected.lastDayOfWeek}` : undefined}
           >
             <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="Select a week" />

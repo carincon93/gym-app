@@ -248,7 +248,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     };
 
     handleAddRecord(record);
-    showStopWatch.set(true);
+    // showStopWatch.set(true);
   };
 
   const handleUpdateFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
