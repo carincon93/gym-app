@@ -361,8 +361,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
       setWeekRecords(
         records.filter(
           (record) =>
-            record.id > Number(selectedWeek?.firstDayOfWeek) &&
-            record.id < Number(selectedWeek?.lastDayOfWeek)
+            record.id > selectedWeek?.firstDayOfWeek &&
+            record.id < selectedWeek?.lastDayOfWeek
         )
       );
     });
@@ -749,8 +749,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                   <Calendar />
                   Week:
                 </strong>
-                {formatDate(Number(selectedWeek?.firstDayOfWeek))} -{" "}
-                {formatDate(Number(selectedWeek?.lastDayOfWeek))}
+                {formatDate(selectedWeek?.firstDayOfWeek)} -{" "}
+                {formatDate(selectedWeek?.lastDayOfWeek)}
               </div>
 
               {elapsedTime ? (
@@ -799,7 +799,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
         setOpenTreadmillDialog={setOpenTreadmillDialog}
       />
 
-      <div className="fixed bottom-4 left-0 right-0 px-2 w-full flex justify-between items-center">
+      <div className="absolute bottom-4 left-0 right-0 px-2 w-full flex justify-between items-center">
         <Button variant="destructive" onClick={() => setOpenResetDialog(true)}>
           Reset
         </Button>

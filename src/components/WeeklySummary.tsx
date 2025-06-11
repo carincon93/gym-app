@@ -232,7 +232,11 @@ export default function WeeklySummary({
                 lastDayOfWeek: Number(value.split(",")[1]),
               });
             }}
-            defaultValue={weekSelected ? `${weekSelected.firstDayOfWeek},${weekSelected.lastDayOfWeek}` : undefined}
+            defaultValue={
+              weekSelected
+                ? `${weekSelected.firstDayOfWeek},${weekSelected.lastDayOfWeek}`
+                : undefined
+            }
           >
             <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="Select a week" />
@@ -256,7 +260,7 @@ export default function WeeklySummary({
             className="translate-y-10"
           />
 
-          <div className="text-center text-slate-500 mt-2 text-xs">
+          <div className="text-center text-slate-500 mt-2 text-xs w-full">
             <div className="bg-white p-2 rounded-md shadow-md block">
               <strong>Optimal weekly sets</strong>
               <div className="flex flex-col space-y-2 mt-2">

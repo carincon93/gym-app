@@ -74,7 +74,7 @@ export const addWeek = async (currentWeek: Week): Promise<Week> => {
 
   const now = Date.now();
 
-  if (Number(currentWeek?.lastDayOfWeek) > now && now < lastDayOfWeek)
+  if (currentWeek?.lastDayOfWeek > now && now < lastDayOfWeek)
     return currentWeek;
 
   const week = {
