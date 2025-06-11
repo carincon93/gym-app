@@ -454,10 +454,12 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             <DialogDescription asChild>
               <div>
                 {records.slice(-10).every((record) => record.reps >= 12) &&
-                  records.length > 0 && (
-                    <small className="py-1 px-2 bg-red-400 text-white inline-block rounded-md mb-2">
-                      Time to increase weight
-                    </small>
+                  records.length >= 10 && (
+                    <div className="flex items-center justify-center mb-4">
+                      <small className="py-1 px-2 bg-red-500 text-white rounded-md">
+                        Time to increase weight
+                      </small>
+                    </div>
                   )}
                 <div className="relative">
                   <small
