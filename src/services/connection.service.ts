@@ -1,10 +1,10 @@
 export const DB_NAME = "GymDB";
 const OBJECTS_STORE = [
+  "weeks",
+  "maxgymtime",
   "records",
   "climbmill",
   "treadmill",
-  "weeks",
-  "maxgymtime",
 ];
 
 export const getDBVersion = (): Promise<number> => {
@@ -22,54 +22,52 @@ export const getDBVersion = (): Promise<number> => {
 };
 
 export const openDB = async (): Promise<IDBDatabase> => {
-  // First, check and create all object stores
-  for (const store of OBJECTS_STORE) {
-    const currentVersion = await getDBVersion();
-    const request = indexedDB.open(DB_NAME, currentVersion);
+  const currentVersion = await getDBVersion();
+
+  // Check which stores need to be created
+  const request = indexedDB.open(DB_NAME);
+  const missingStores = await new Promise<string[]>((resolve) => {
     request.onsuccess = () => {
       const db = request.result;
-      const exists = db.objectStoreNames.contains(store);
-      if (!exists) {
-        createObjectStore(store);
-      }
+      const missing = OBJECTS_STORE.filter(
+        (store) => !db.objectStoreNames.contains(store)
+      );
       db.close();
-      return exists;
+      resolve(missing);
     };
+  });
+
+  // If there are missing stores
+  if (missingStores.length > 0) {
+    // If it's first time (version 0), set version to 1
+    // Otherwise increment existing version
+    const newVersion = currentVersion === 0 ? 1 : currentVersion + 1;
+
+    // Create all missing stores in one version upgrade
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, newVersion);
+
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        missingStores.forEach((storeName) => {
+          if (!db.objectStoreNames.contains(storeName)) {
+            db.createObjectStore(storeName, {
+              keyPath: "id",
+              autoIncrement: true,
+            });
+          }
+        });
+      };
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
   }
 
-  // Get final version after all stores are created
-  const DB_VERSION = await getDBVersion();
-
-  // Open DB with final version
+  // If all stores exist, just open DB with current version
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
+    const request = indexedDB.open(DB_NAME, currentVersion);
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-export const createObjectStore = async (storeName: string): Promise<void> => {
-  const DB_VERSION = await getDBVersion();
-
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION + 1);
-
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(storeName)) {
-        db.createObjectStore(storeName, {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-      }
-    };
-
-    request.onsuccess = () => {
-      request.result.close();
-      resolve();
-    };
-
     request.onerror = () => reject(request.error);
   });
 };
