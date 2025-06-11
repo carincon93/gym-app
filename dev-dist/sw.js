@@ -79,7 +79,7 @@ define(['./workbox-86c9b217'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/gym-app/index.html",
-    "revision": "0.2pttio578sg"
+    "revision": "0.c8ni7ukguoo"
   }], {
     "directoryIndex": "index.html"
   });

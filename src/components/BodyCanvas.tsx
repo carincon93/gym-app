@@ -376,6 +376,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
   useEffect(() => {
     if (!selectedWeek) return;
 
+    initRiveInstance();
+
     getRecords().then((records) => {
       setWeekRecords(
         records.filter(
@@ -753,7 +755,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             Sun
           </Button>
         </div>
-
         {loading && (
           <Loading className="text-violet-900 dark:text-white absolute inset-0 z-50 h-[100svh] flex items-center justify-center" />
         )}
