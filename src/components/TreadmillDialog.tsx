@@ -49,7 +49,7 @@ export default function TreadmillDialog({
     await addTreadmillRecord(newTreadmill);
     setTreadmillRecords([
       ...treadmillRecords,
-      { ...newTreadmill, time: newTreadmill.time / 60000 }
+      { ...newTreadmill, time: newTreadmill.time / 60000 },
     ]);
   };
 
@@ -178,6 +178,7 @@ export default function TreadmillDialog({
               id="speed"
               type="number"
               min="0"
+              step="0.1"
               autoComplete="off"
               required
             />
