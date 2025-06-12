@@ -83,7 +83,7 @@ export default function TreadmillDialog({
                     treadmillRecords.length === 0 && "hidden"
                   }`}
                 >
-                  Speed
+                  Distance
                 </small>
                 <div className="flex space-x-1 items-end justify-center">
                   {treadmillRecords.slice(-10).map((treadmillRecord) => (
@@ -93,10 +93,10 @@ export default function TreadmillDialog({
                     >
                       <div
                         className={`w-4 bg-green-400 flex justify-center`}
-                        style={{ height: treadmillRecord.speed + "px" }}
+                        style={{ height: treadmillRecord.distance + "px" }}
                       />
                       <small className="block text-center text-[8px]">
-                        {treadmillRecord.speed}
+                        {treadmillRecord.distance}
                       </small>
                     </div>
                   ))}
