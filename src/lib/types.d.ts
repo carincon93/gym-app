@@ -28,7 +28,7 @@ export type Week = {
 
 export type Treadmill = {
   id: number;
-  inclineRange: number;
+  distance: number;
   speed: number;
   time: number;
 };

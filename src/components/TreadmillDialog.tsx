@@ -37,7 +37,7 @@ export default function TreadmillDialog({
       id: Date.now(),
       speed: Number(formData.get("speed")),
       time: Number(formData.get("time")) * 60000, // convert minutes to milliseconds
-      inclineRange: Number(formData.get("inclineRange")),
+      distance: Number(formData.get("distance")),
     };
 
     addTreadmill(treadmillRecord);
@@ -199,12 +199,12 @@ export default function TreadmillDialog({
           </fieldset>
 
           <fieldset>
-            <Label className="my-2 text-xs" htmlFor="inclineRange">
-              Incline range *
+            <Label className="my-2 text-xs" htmlFor="distance">
+              Distance (Km) *
             </Label>
             <Input
-              name="inclineRange"
-              id="inclineRange"
+              name="distance"
+              id="distance"
               type="number"
               min="0"
               step="0.1"
