@@ -850,7 +850,14 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                   onClick={handleAddMaxTime}
                   className="bg-green-500 hover:bg-green-600"
                 >
-                  {elapsedTime ? <RefreshCw /> : <Play />}
+                  {elapsedTime ? (
+                    <RefreshCw />
+                  ) : (
+                    <>
+                      <Play className="mr-2" />
+                      Start session
+                    </>
+                  )}
                 </Button>
                 {elapsedTime && (
                   <>
