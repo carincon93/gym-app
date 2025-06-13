@@ -93,7 +93,7 @@ export default function ClimbmillDialog({
                     >
                       <div
                         className={`w-4 bg-green-400 flex justify-center`}
-                        style={{ height: (climbmillRecord.stairs / 1000) + "px" }}
+                        style={{ height: climbmillRecord.stairs / 1000 + "px" }}
                       />
                       <small className="block text-center text-[8px]">
                         {climbmillRecord.stairs}
