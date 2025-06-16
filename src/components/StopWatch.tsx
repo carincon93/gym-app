@@ -2,52 +2,57 @@ import { useEffect, useState } from "react";
 import { showStopWatch } from "@/stores/gymStore";
 import { useStore } from "@nanostores/react";
 import { Button } from "./ui/button";
-import { Square } from "lucide-react";
+import { Play, Square } from "lucide-react";
 
 export const StopWatch = () => {
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
-  const [startTime, setStartTime] = useState<number>(0);
+  const [elapsedTime, setElapsedTime] = useState<number>(180);
 
   const $showStopWatchValue = useStore(showStopWatch);
 
   useEffect(() => {
-    if (!startTime) return;
+    if (!$showStopWatchValue) return;
 
     const updateElapsedTime = () => {
-      setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // In seconds
+      setElapsedTime((prevTime) => {
+        const newTime = prevTime - 1;
+        if (newTime <= 0) {
+          showStopWatch.set(false);
+          return 0;
+        }
+        return newTime;
+      });
     };
-
-    updateElapsedTime(); // Calculate when the page has loaded
 
     const interval = setInterval(updateElapsedTime, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime]);
-
-  useEffect(() => {
-    if ($showStopWatchValue) {
-      setStartTime(Date.now());
-    } else {
-      setElapsedTime(0);
-      setStartTime(0);
-    }
   }, [$showStopWatchValue]);
 
-  useEffect(() => {
-    if (elapsedTime >= 180) {
-      setElapsedTime(0);
-      setStartTime(0);
-      showStopWatch.set(false);
-    }
-  }, [elapsedTime]);
-
   return (
-    <div
-      className={`fixed ${
-        $showStopWatchValue ? "flex" : "hidden"
-      } top-0 left-0 right-0 text-6xl text-center h-full w-full flex-col items-center justify-center bg-white mx-auto z-[9999]`}
-    >
-      {elapsedTime}s
+    <div className="border shadow rounded">
+      <div className="flex items-center justify-center">
+        <div>
+            <button
+              onClick={() => setElapsedTime(elapsedTime - 10)}
+              className="p-2 shadow"
+            >
+              -
+            </button>
+            <small className="mx-1.5">{elapsedTime}s</small>
+            <button
+              onClick={() => setElapsedTime(elapsedTime + 10)}
+              className="p-2 shadow"
+            >
+              +
+            </button>
+        </div>
+        <button
+          onClick={() => showStopWatch.set(!$showStopWatchValue)}
+          className="bg-black p-2 block text-white rounded"
+        >
+          {$showStopWatchValue ? <Square size={14} /> : <Play size={14} />}
+        </button>
+      </div>
     </div>
   );
 };

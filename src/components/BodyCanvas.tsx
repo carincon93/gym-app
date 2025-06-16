@@ -73,6 +73,7 @@ import { deleteDB } from "@/services/connection.service";
 import { toast } from "sonner";
 import ClimbmillDialog from "./ClimbmillDialog";
 import TreadmillDialog from "./TreadmillDialog";
+import { StopWatch } from "./StopWatch";
 
 type BodyCanvasProps = {};
 
@@ -611,9 +612,12 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                 </Button>
               </DialogClose>
 
+              <StopWatch />
+
               <Button
                 type="submit"
                 form="machine-form"
+                className="text-xs"
                 disabled={!selectedWeek?.lastDayOfWeek}
               >
                 Save and rest
