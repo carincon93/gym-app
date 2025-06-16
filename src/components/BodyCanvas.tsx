@@ -620,7 +620,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                 className="text-xs"
                 disabled={!selectedWeek?.lastDayOfWeek}
               >
-                Save and rest
+                Save / Rest
               </Button>
             </div>
           </DialogFooter>

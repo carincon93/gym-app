@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { showStopWatch } from "@/stores/gymStore";
 import { useStore } from "@nanostores/react";
-import { Button } from "./ui/button";
 import { Play, Square } from "lucide-react";
 
 export const StopWatch = () => {
@@ -28,27 +27,34 @@ export const StopWatch = () => {
     return () => clearInterval(interval);
   }, [$showStopWatchValue]);
 
+  useEffect(() => {
+    if (elapsedTime === 0) {
+      showStopWatch.set(false);
+      setElapsedTime(180);
+    }
+  }, [elapsedTime]);
+
   return (
     <div className="border shadow rounded">
       <div className="flex items-center justify-center">
-        <div>
-            <button
-              onClick={() => setElapsedTime(elapsedTime - 10)}
-              className="p-2 shadow"
-            >
-              -
-            </button>
-            <small className="mx-1.5">{elapsedTime}s</small>
-            <button
-              onClick={() => setElapsedTime(elapsedTime + 10)}
-              className="p-2 shadow"
-            >
-              +
-            </button>
+        <div className="flex items-center">
+          <button
+            onClick={() => setElapsedTime(elapsedTime - 10)}
+            className="h-9 w-9 shadow rounded flex items-center justify-center"
+          >
+            -
+          </button>
+          <small className="mx-3 min-w-[3ch] text-center">{elapsedTime}s</small>
+          <button
+            onClick={() => setElapsedTime(elapsedTime + 10)}
+            className="h-9 w-9 shadow rounded flex items-center justify-center"
+          >
+            +
+          </button>
         </div>
         <button
           onClick={() => showStopWatch.set(!$showStopWatchValue)}
-          className="bg-black p-2 block text-white rounded"
+          className="bg-black h-9 w-9 flex items-center justify-center text-white rounded"
         >
           {$showStopWatchValue ? <Square size={14} /> : <Play size={14} />}
         </button>
