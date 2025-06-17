@@ -171,7 +171,7 @@ export default function TreadmillDialog({
         >
           <fieldset>
             <Label className="my-2 text-xs" htmlFor="speed">
-              Speed *
+              Max speed *
             </Label>
             <Input
               name="speed"
