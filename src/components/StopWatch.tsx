@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
+import { showStopWatch } from "@/stores/gymStore";
+import { useStore } from "@nanostores/react";
 
 export const StopWatch = () => {
   const [elapsedTime, setElapsedTime] = useState<number>(180);
   const [isResting, setIsResting] = useState<boolean>(false);
 
-  const initStopWatch = () => {
+  const $showStopWatchValue = useStore(showStopWatch);
+
+  useEffect(() => {
+    if (!$showStopWatchValue) return;
+
     setIsResting(true);
     const endTime = localStorage.getItem("stopWatchEndTime");
     if (!endTime) {
@@ -22,8 +28,9 @@ export const StopWatch = () => {
 
       if (remainingSeconds <= 0) {
         localStorage.removeItem("stopWatchEndTime");
-        setElapsedTime(0);
+        setElapsedTime(180);
         setIsResting(false);
+        showStopWatch.set(false);
         return;
       }
 
@@ -34,13 +41,13 @@ export const StopWatch = () => {
     updateElapsedTime(); // Initial call
 
     return () => clearInterval(interval);
-  };
+  }, [$showStopWatchValue]);
 
   useEffect(() => {
     const startTime = localStorage.getItem("stopWatchEndTime");
 
     if (startTime) {
-      initStopWatch();
+      showStopWatch.set(true);
     }
   }, []);
 
@@ -49,7 +56,9 @@ export const StopWatch = () => {
       <div className="flex items-center justify-center">
         <div className="flex items-center">
           <button
-            onClick={() => setElapsedTime(elapsedTime - 10)}
+            onClick={() =>
+              setElapsedTime(elapsedTime > 0 ? elapsedTime - 10 : 0)
+            }
             className={`h-9 w-9 shadow rounded flex items-center justify-center ${
               isResting && "opacity-50"
             }`}
@@ -69,7 +78,7 @@ export const StopWatch = () => {
           </button>
         </div>
         <button
-          onClick={() => initStopWatch()}
+          onClick={() => showStopWatch.set(true)}
           className={`bg-black h-9 w-9 flex items-center justify-center text-white rounded ${
             isResting && "opacity-50"
           }`}
