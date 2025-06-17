@@ -1,38 +1,48 @@
 import { useEffect, useState } from "react";
-import { showStopWatch } from "@/stores/gymStore";
-import { useStore } from "@nanostores/react";
-import { Play, Square } from "lucide-react";
+import { Play } from "lucide-react";
 
 export const StopWatch = () => {
   const [elapsedTime, setElapsedTime] = useState<number>(180);
+  const [isResting, setIsResting] = useState<boolean>(false);
 
-  const $showStopWatchValue = useStore(showStopWatch);
-
-  useEffect(() => {
-    if (!$showStopWatchValue) return;
+  const initStopWatch = () => {
+    setIsResting(true);
+    const endTime = localStorage.getItem("stopWatchEndTime");
+    if (!endTime) {
+      const targetTime = Date.now() + elapsedTime * 1000;
+      localStorage.setItem("stopWatchEndTime", targetTime.toString());
+    }
 
     const updateElapsedTime = () => {
-      setElapsedTime((prevTime) => {
-        const newTime = prevTime - 1;
-        if (newTime <= 0) {
-          showStopWatch.set(false);
-          return 0;
-        }
-        return newTime;
-      });
+      const currentEndTime = localStorage.getItem("stopWatchEndTime");
+      if (!currentEndTime) return;
+
+      const remainingMs = parseInt(currentEndTime) - Date.now();
+      const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+      if (remainingSeconds <= 0) {
+        localStorage.removeItem("stopWatchEndTime");
+        setElapsedTime(0);
+        setIsResting(false);
+        return;
+      }
+
+      setElapsedTime(remainingSeconds);
     };
 
     const interval = setInterval(updateElapsedTime, 1000);
+    updateElapsedTime(); // Initial call
 
     return () => clearInterval(interval);
-  }, [$showStopWatchValue]);
+  };
 
   useEffect(() => {
-    if (elapsedTime === 0) {
-      showStopWatch.set(false);
-      setElapsedTime(180);
+    const startTime = localStorage.getItem("stopWatchEndTime");
+
+    if (startTime) {
+      initStopWatch();
     }
-  }, [elapsedTime]);
+  }, []);
 
   return (
     <div className="border shadow rounded">
@@ -40,23 +50,33 @@ export const StopWatch = () => {
         <div className="flex items-center">
           <button
             onClick={() => setElapsedTime(elapsedTime - 10)}
-            className="h-9 w-9 shadow rounded flex items-center justify-center"
+            className={`h-9 w-9 shadow rounded flex items-center justify-center ${
+              isResting && "opacity-50"
+            }`}
+            disabled={isResting}
           >
             -
           </button>
           <small className="mx-3 min-w-[3ch] text-center">{elapsedTime}s</small>
           <button
             onClick={() => setElapsedTime(elapsedTime + 10)}
-            className="h-9 w-9 shadow rounded flex items-center justify-center"
+            className={`h-9 w-9 shadow rounded flex items-center justify-center ${
+              isResting && "opacity-50"
+            }`}
+            disabled={isResting}
           >
             +
           </button>
         </div>
         <button
-          onClick={() => showStopWatch.set(!$showStopWatchValue)}
-          className="bg-black h-9 w-9 flex items-center justify-center text-white rounded"
+          onClick={() => initStopWatch()}
+          className={`bg-black h-9 w-9 flex items-center justify-center text-white rounded ${
+            isResting && "opacity-50"
+          }`}
+          disabled={isResting}
         >
-          {$showStopWatchValue ? <Square size={14} /> : <Play size={14} />}
+          <Play size={14} />
+          {""}
         </button>
       </div>
     </div>
