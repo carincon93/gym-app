@@ -155,6 +155,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/biceps/biceps6.webp",
     },
+    {
+      id: 64,
+      name: "Fixed weight barbell",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/biceps/biceps7.webp",
+    },
   ],
   Shoulders: [
     {
@@ -409,7 +416,7 @@ export const machines = {
     {
       id: 55,
       name: "Barbell row",
-      startingResistance: 0,
+      startingResistance: 20,
       seatingLevel: "",
       image: "/gym-app/machines/lats/lats8.webp",
     },
@@ -419,6 +426,13 @@ export const machines = {
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/lats/lats9.webp",
+    },
+    {
+      id: 63,
+      name: "Fixed weight barbell",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/lats/lats10.webp",
     },
   ],
   Triceps: [
@@ -473,7 +487,7 @@ const chestMachineIds = ["1", "2", "3", "4", "5", "6", "56"];
 const quadsMachineIds = ["7", "8", "9", "10", "59"];
 const absMachineIds = ["11", "12"];
 const obliquesMachineIds = ["13"];
-const bicepsMachineIds = ["14", "15", "16", "17", "18", "53"];
+const bicepsMachineIds = ["14", "15", "16", "17", "18", "53", "64"];
 const shouldersMachineIds = ["19", "20", "21", "22"];
 const forearmsMachineIds = ["23", "24"];
 const adductorsMachineIds = ["25"];
@@ -483,7 +497,7 @@ const neckMachineIds = ["31", "32"];
 const hipsMachineIds = ["33", "34", "35", "36"];
 const hamstringsMachineIds = ["37", "38"];
 const glutesMachineIds = ["39", "40", "41"];
-const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55", "58"];
+const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55", "58", "63"];
 const tricepsMachineIds = ["48", "49", "50", "51", "60"];
 const lowerBackMachineIds = ["52"];
 
