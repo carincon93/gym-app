@@ -282,6 +282,9 @@ export default function WeeklySummary({
           <div className="text-center text-slate-500 mt-2 text-xs w-full">
             <div className="bg-white p-2 rounded-md shadow-md block">
               <strong>Optimal weekly sets</strong>
+              <div className="mt-1 text-xs text-slate-600 italic">
+                Focus on getting stronger in the exercises you enjoy most. 💪🏻
+              </div>
               <div className="flex flex-col space-y-2 mt-2">
                 <div className="flex items-center text-left space-x-2">
                   <figure
