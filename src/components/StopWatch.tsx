@@ -4,7 +4,7 @@ import { showStopWatch } from "@/stores/gymStore";
 import { useStore } from "@nanostores/react";
 
 export const StopWatch = () => {
-  const [elapsedTime, setElapsedTime] = useState<number>(180);
+  const [elapsedTime, setElapsedTime] = useState<number>(200);
   const [isResting, setIsResting] = useState<boolean>(false);
 
   const $showStopWatchValue = useStore(showStopWatch);
@@ -28,7 +28,7 @@ export const StopWatch = () => {
 
       if (remainingSeconds <= 0) {
         localStorage.removeItem("stopWatchEndTime");
-        setElapsedTime(180);
+        setElapsedTime(200);
         setIsResting(false);
         showStopWatch.set(false);
         return;

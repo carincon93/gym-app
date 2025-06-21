@@ -21,7 +21,25 @@ import {
 
 import { getRecords } from "@/services/records.service";
 import { Button } from "./ui/button";
-import { absMachineIds, adductorsMachineIds, bicepsMachineIds, calvesMachineIds, chestMachineIds, forearmsMachineIds, glutesMachineIds, hamstringsMachineIds, hipsMachineIds, latsMachineIds, lowerBackMachineIds, neckMachineIds, obliquesMachineIds, quadsMachineIds, shouldersMachineIds, trapsMachineIds, tricepsMachineIds } from "@/data/data";
+import {
+  absMachineIds,
+  adductorsMachineIds,
+  bicepsMachineIds,
+  calvesMachineIds,
+  chestMachineIds,
+  forearmsMachineIds,
+  glutesMachineIds,
+  hamstringsMachineIds,
+  hipsMachineIds,
+  latsMachineIds,
+  lowerBackMachineIds,
+  neckMachineIds,
+  obliquesMachineIds,
+  quadsMachineIds,
+  shouldersMachineIds,
+  trapsMachineIds,
+  tricepsMachineIds,
+} from "@/data/data";
 
 type BodyCanvasProps = {
   openSummaryDialog: boolean;
@@ -76,7 +94,7 @@ export default function WeeklySummary({
                 ? COLORS.inactive
                 : qty < 12
                 ? COLORS.minimum
-                : qty <= 20
+                : qty === 12
                 ? COLORS.optimum
                 : COLORS.excess,
           });
@@ -282,9 +300,12 @@ export default function WeeklySummary({
                     }}
                   />
                   <span>
-                    <strong className="text-[10px]">(Recommended) </strong>
+                    <strong className="text-[10px]">(Recommended)</strong>
                     <br />
-                    {">"} 12 and {"<"} 20 sets per muscle group
+                    12 sets per muscle group{" "}
+                    <span className="text-[10px] text-slate-400">
+                      (max. 10 reps, 40s set)
+                    </span>
                   </span>
                 </div>
                 <div className="flex items-center text-left space-x-2">
@@ -297,7 +318,7 @@ export default function WeeklySummary({
                   <span>
                     <strong className="text-[10px]">(Exceeded)</strong>
                     <br />
-                    {">"} 20 sets per muscle group
+                    {">"} 12 sets per muscle group
                   </span>
                 </div>
               </div>

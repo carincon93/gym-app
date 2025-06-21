@@ -475,7 +475,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             </DialogTitle>
             <DialogDescription asChild>
               <div>
-                {records.slice(-10).every((record) => record.reps >= 12) &&
+                {records.slice(-10).every((record) => record.reps >= 10) &&
                   records.length >= 10 && (
                     <div className="flex items-center justify-center mb-4">
                       <small className="py-1 px-2 bg-red-500 text-white rounded-md">
