@@ -362,6 +362,20 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/glutes/glutes3.webp",
     },
+    {
+      id: 65,
+      name: "Hammer Leg press",
+      startingResistance: 0,
+      seatingLevel: "",
+      image: "/gym-app/machines/glutes/glutes4.webp",
+    },
+    {
+      id: 66,
+      name: "Barbell row",
+      startingResistance: 20,
+      seatingLevel: "",
+      image: "/gym-app/machines/glutes/glutes5.webp",
+    },
   ],
   Lats: [
     {
@@ -496,8 +510,19 @@ const trapsMachineIds = ["29", "30", "57", "61", "62"];
 const neckMachineIds = ["31", "32"];
 const hipsMachineIds = ["33", "34", "35", "36"];
 const hamstringsMachineIds = ["37", "38"];
-const glutesMachineIds = ["39", "40", "41"];
-const latsMachineIds = ["42", "43", "44", "45", "46", "47", "54", "55", "58", "63"];
+const glutesMachineIds = ["39", "40", "41", "65", "66"];
+const latsMachineIds = [
+  "42",
+  "43",
+  "44",
+  "45",
+  "46",
+  "47",
+  "54",
+  "55",
+  "58",
+  "63",
+];
 const tricepsMachineIds = ["48", "49", "50", "51", "60"];
 const lowerBackMachineIds = ["52"];
 
