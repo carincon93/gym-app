@@ -327,6 +327,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
 
   const handleWeek = async () => {
     const currentWeekDb = await getWeek();
+    setLoading(true);
 
     await addWeek(currentWeekDb).then(setSelectedWeek);
   };
@@ -376,6 +377,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
 
   useEffect(() => {
     if (!selectedWeek) return;
+
+    setLoading(false);
 
     initRiveInstance();
     getMaxGymTime().then(setMaxGymTime);
@@ -762,6 +765,34 @@ export default function BodyCanvas({}: BodyCanvasProps) {
         </DialogContent>
       </Dialog>
 
+      <AlertDialog open={openResetDialog} onOpenChange={setOpenResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              data from local database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemoveDb}>
+              Reset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <ClimbmillDialog
+        openClimbmillDialog={openClimbmillDialog}
+        setOpenClimbmillDialog={setOpenClimbmillDialog}
+      />
+
+      <TreadmillDialog
+        openTreadmillDialog={openTreadmillDialog}
+        setOpenTreadmillDialog={setOpenTreadmillDialog}
+      />
+
       <div className="flex flex-col justify-between items-center min-h-[100svh]">
         <div className="grid grid-cols-6 w-full mb-4">
           <Button
@@ -874,34 +905,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
           )}
         </div>
       </div>
-
-      <AlertDialog open={openResetDialog} onOpenChange={setOpenResetDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              data from local database.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRemoveDb}>
-              Reset
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <ClimbmillDialog
-        openClimbmillDialog={openClimbmillDialog}
-        setOpenClimbmillDialog={setOpenClimbmillDialog}
-      />
-
-      <TreadmillDialog
-        openTreadmillDialog={openTreadmillDialog}
-        setOpenTreadmillDialog={setOpenTreadmillDialog}
-      />
 
       <div className="absolute bottom-4 left-0 right-0 px-2 w-full flex justify-between items-center">
         <Button variant="destructive" onClick={() => setOpenResetDialog(true)}>
