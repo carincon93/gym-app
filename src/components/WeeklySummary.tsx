@@ -252,8 +252,10 @@ export default function WeeklySummary({
               });
             }}
             defaultValue={
-              weekSelected
-                ? `${weekSelected.firstDayOfWeek},${weekSelected.lastDayOfWeek}`
+              weeks.length > 0
+                ? `${weeks[weeks.length - 1].firstDayOfWeek},${
+                    weeks[weeks.length - 1].lastDayOfWeek
+                  }`
                 : undefined
             }
           >
