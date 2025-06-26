@@ -405,7 +405,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     handleWeek();
   }, []);
 
-  console.log(records);
 
   return (
     <div>
