@@ -317,6 +317,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     const newRecords = weekRecords.filter(
       (oldRecord) => oldRecord.id !== record.id
     );
+
     setRecords(newRecords);
     setWeekRecords(newRecords);
 
@@ -404,6 +405,8 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     handleWeek();
   }, []);
 
+  console.log(records);
+
   return (
     <div>
       <Drawer
@@ -478,7 +481,10 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             </DialogTitle>
             <DialogDescription asChild>
               <div>
-                {records.slice(-10).every((record) => record.reps >= 10) &&
+                {records
+                  .filter((record) => record.machineId === machineSelected?.id)
+                  .slice(-10)
+                  .every((record) => record.reps >= 10) &&
                   records.length >= 10 && (
                     <div className="flex items-center justify-center mb-4">
                       <small className="py-1 px-2 bg-red-500 text-white rounded-md">
@@ -496,21 +502,26 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                     Reps
                   </small>
                   <div className="flex space-x-1 items-end justify-center">
-                    {records.slice(-10).map((record) => (
-                      <div
-                        key={`rep-${record.id}`}
-                        onClick={() => handleSelectedRecord(record)}
-                        className="hover:opacity-60 cursor-pointer"
-                      >
+                    {records
+                      .filter(
+                        (record) => record.machineId === machineSelected?.id
+                      )
+                      .slice(-10)
+                      .map((record) => (
                         <div
-                          className={`w-4 bg-green-400 flex justify-center`}
-                          style={{ height: record.reps + "px" }}
-                        />
-                        <small className="block text-center text-[8px] select-none">
-                          {record.reps}
-                        </small>
-                      </div>
-                    ))}
+                          key={`rep-${record.id}`}
+                          onClick={() => handleSelectedRecord(record)}
+                          className="hover:opacity-60 cursor-pointer"
+                        >
+                          <div
+                            className={`w-4 bg-green-400 flex justify-center`}
+                            style={{ height: record.reps + "px" }}
+                          />
+                          <small className="block text-center text-[8px] select-none">
+                            {record.reps}
+                          </small>
+                        </div>
+                      ))}
                   </div>
                 </div>
 
@@ -523,21 +534,26 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                     Weight (Kg)
                   </small>
                   <div className="flex space-x-1 items-end justify-center">
-                    {records.slice(-10).map((record) => (
-                      <div
-                        key={`weight-${record.id}`}
-                        onClick={() => handleSelectedRecord(record)}
-                        className="hover:opacity-60 cursor-pointer"
-                      >
+                    {records
+                      .filter(
+                        (record) => record.machineId === machineSelected?.id
+                      )
+                      .slice(-10)
+                      .map((record) => (
                         <div
-                          className={`w-4 bg-amber-400 flex justify-center`}
-                          style={{ height: record.weight / 1.5 + "px" }}
-                        />
-                        <small className="block text-center text-[8px] select-none">
-                          {record.weight}
-                        </small>
-                      </div>
-                    ))}
+                          key={`weight-${record.id}`}
+                          onClick={() => handleSelectedRecord(record)}
+                          className="hover:opacity-60 cursor-pointer"
+                        >
+                          <div
+                            className={`w-4 bg-amber-400 flex justify-center`}
+                            style={{ height: record.weight / 1.5 + "px" }}
+                          />
+                          <small className="block text-center text-[8px] select-none">
+                            {record.weight}
+                          </small>
+                        </div>
+                      ))}
                   </div>
                 </div>
 
@@ -550,23 +566,31 @@ export default function BodyCanvas({}: BodyCanvasProps) {
                     Date
                   </small>
                   <div className="flex items-end justify-center">
-                    {records.slice(-10).map((record) => (
-                      <div
-                        key={`weight-${record.id}`}
-                        onClick={() => handleSelectedRecord(record)}
-                        style={{ margin: "0 2px" }}
-                      >
-                        <div className={`flex justify-center select-none`} />
-                        <small className="block text-center text-[8px] -rotate-90 w-[16px] select-none">
-                          {record.id
-                            ? new Date(record.id).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                              })
-                            : ""}
-                        </small>
-                      </div>
-                    ))}
+                    {records
+                      .filter(
+                        (record) => record.machineId === machineSelected?.id
+                      )
+                      .slice(-10)
+                      .map((record) => (
+                        <div
+                          key={`weight-${record.id}`}
+                          onClick={() => handleSelectedRecord(record)}
+                          style={{ margin: "0 2px" }}
+                        >
+                          <div className={`flex justify-center select-none`} />
+                          <small className="block text-center text-[8px] -rotate-90 w-[16px] select-none">
+                            {record.id
+                              ? new Date(record.id).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                  }
+                                )
+                              : ""}
+                          </small>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
