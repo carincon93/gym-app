@@ -376,6 +376,13 @@ export const machines = {
       seatingLevel: "",
       image: "/gym-app/machines/glutes/glutes5.webp",
     },
+    {
+      id: 67,
+      name: "Short Barbell row",
+      startingResistance: 10,
+      seatingLevel: "",
+      image: "/gym-app/machines/glutes/glutes6.webp",
+    },
   ],
   Lats: [
     {
@@ -510,7 +517,7 @@ const trapsMachineIds = ["29", "30", "57", "61", "62"];
 const neckMachineIds = ["31", "32"];
 const hipsMachineIds = ["33", "34", "35", "36"];
 const hamstringsMachineIds = ["37", "38"];
-const glutesMachineIds = ["39", "40", "41", "65", "66"];
+const glutesMachineIds = ["39", "40", "41", "65", "66", "67"];
 const latsMachineIds = [
   "42",
   "43",

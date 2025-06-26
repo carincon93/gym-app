@@ -232,6 +232,8 @@ export default function WeeklySummary({
   }, [records]);
 
   useEffect(() => {
+    if (!openSummaryDialog) return;
+
     getAllWeeks().then(setWeeks);
   }, [openSummaryDialog]);
 
@@ -251,11 +253,9 @@ export default function WeeklySummary({
                 lastDayOfWeek: Number(value.split(",")[1]),
               });
             }}
-            defaultValue={
-              weeks.length > 0
-                ? `${weeks[weeks.length - 1].firstDayOfWeek},${
-                    weeks[weeks.length - 1].lastDayOfWeek
-                  }`
+            value={
+              weekSelected
+                ? `${weekSelected.firstDayOfWeek},${weekSelected.lastDayOfWeek}`
                 : undefined
             }
           >

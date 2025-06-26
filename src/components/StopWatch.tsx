@@ -97,7 +97,7 @@ export const StopWatch = () => {
         </div>
       </div>
 
-      {expandStopWatch && (
+      {expandStopWatch && isResting && (
         <div className="bg-white absolute inset-0 w-full h-full z-10 top-0 rounded-md flex items-center justify-center text-6xl font-bold">
           {elapsedTime}s
         </div>
