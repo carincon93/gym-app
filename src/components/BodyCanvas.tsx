@@ -215,7 +215,9 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     } else if (today === "Tue") {
       createRiveInstance(`Upper A - Tuesday`);
     } else if (today === "Wed") {
-      createRiveInstance(`Lower A - Wednesday`);
+      createRiveInstance(`Upper C - Wednesday`);
+    } else if (today === "Thu") {
+      createRiveInstance(`Lower A - Thursday`);
     } else if (today === "Fri") {
       createRiveInstance(`Upper B - Friday`);
     } else if (today === "Sat") {
@@ -817,13 +819,12 @@ export default function BodyCanvas({}: BodyCanvasProps) {
       />
 
       <div className="flex flex-col justify-between items-center min-h-[100svh]">
-        <div className="grid grid-cols-6 w-full mb-4">
+        <div className="grid grid-cols-7 w-full mb-4">
           <Button
             onClick={() => createRiveInstance("Upper A - Monday")}
             className={`text-xs w-full ${
               daySelected === "Monday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Monday"}
           >
             Mon
           </Button>
@@ -833,19 +834,26 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             className={`text-xs w-full ${
               daySelected === "Tuesday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Tuesday"}
           >
             Tue
           </Button>
 
           <Button
-            onClick={() => createRiveInstance("Lower A - Wednesday")}
+            onClick={() => createRiveInstance("Upper C - Wednesday")}
             className={`text-xs w-full ${
               daySelected === "Wednesday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Wednesday"}
           >
             Wed
+          </Button>
+
+          <Button
+            onClick={() => createRiveInstance("Lower A - Thursday")}
+            className={`text-xs w-full ${
+              daySelected === "Thursday" ? "bg-slate-200" : "bg-slate-100"
+            } rounded-none text-black uppercase hover:bg-slate-300`}
+          >
+            Thu
           </Button>
 
           <Button
@@ -853,7 +861,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             className={`text-xs w-full ${
               daySelected === "Friday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Friday"}
           >
             Fri
           </Button>
@@ -863,7 +870,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             className={`text-xs w-full ${
               daySelected === "Saturday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Saturday"}
           >
             Sat
           </Button>
@@ -873,7 +879,6 @@ export default function BodyCanvas({}: BodyCanvasProps) {
             className={`text-xs w-full ${
               daySelected === "Sunday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
-            // disabled={daySelected !== "Sunday"}
           >
             Sun
           </Button>
