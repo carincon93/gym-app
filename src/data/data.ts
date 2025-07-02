@@ -371,17 +371,10 @@ export const machines = {
     },
     {
       id: 66,
-      name: "Barbell row",
+      name: "Hip trust with Barbell row",
       startingResistance: 20,
       seatingLevel: "",
       image: "/gym-app/machines/glutes/glutes5.webp",
-    },
-    {
-      id: 67,
-      name: "Short Barbell row",
-      startingResistance: 10,
-      seatingLevel: "",
-      image: "/gym-app/machines/glutes/glutes6.webp",
     },
   ],
   Lats: [
@@ -473,14 +466,14 @@ export const machines = {
     },
     {
       id: 50,
-      name: "Roman triceps bar",
+      name: "Overhead triceps extension",
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/triceps/triceps3.webp",
     },
     {
       id: 51,
-      name: "Aura triceps pressdown",
+      name: "Triceps pressdown with ankle strap",
       startingResistance: 0,
       seatingLevel: "",
       image: "/gym-app/machines/triceps/triceps4.webp",
