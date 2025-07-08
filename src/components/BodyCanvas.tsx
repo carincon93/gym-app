@@ -211,15 +211,15 @@ export default function BodyCanvas({}: BodyCanvasProps) {
     ).toLocaleDateString("en-US", { weekday: "short" });
 
     if (today === "Mon") {
-      createRiveInstance(`Upper A - Monday`);
+      createRiveInstance(`Upper C - Monday`);
     } else if (today === "Tue") {
-      createRiveInstance(`Upper A - Tuesday`);
+      createRiveInstance(`Upper E - Tuesday`);
     } else if (today === "Wed") {
-      createRiveInstance(`Upper C - Wednesday`);
+      createRiveInstance(`Upper A - Wednesday`);
     } else if (today === "Thu") {
       createRiveInstance(`Lower A - Thursday`);
     } else if (today === "Fri") {
-      createRiveInstance(`Upper B - Friday`);
+      createRiveInstance(`Upper D - Friday`);
     } else if (today === "Sat") {
       createRiveInstance(`Upper B - Saturday`);
     } else if (today === "Sun") {
@@ -821,7 +821,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
       <div className="flex flex-col justify-between items-center min-h-[100svh]">
         <div className="grid grid-cols-7 w-full mb-4">
           <Button
-            onClick={() => createRiveInstance("Upper A - Monday")}
+            onClick={() => createRiveInstance("Upper C - Monday")}
             className={`text-xs w-full ${
               daySelected === "Monday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
@@ -830,7 +830,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
           </Button>
 
           <Button
-            onClick={() => createRiveInstance("Upper A - Tuesday")}
+            onClick={() => createRiveInstance("Upper E - Tuesday")}
             className={`text-xs w-full ${
               daySelected === "Tuesday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
@@ -839,7 +839,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
           </Button>
 
           <Button
-            onClick={() => createRiveInstance("Upper C - Wednesday")}
+            onClick={() => createRiveInstance("Upper A - Wednesday")}
             className={`text-xs w-full ${
               daySelected === "Wednesday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
@@ -857,7 +857,7 @@ export default function BodyCanvas({}: BodyCanvasProps) {
           </Button>
 
           <Button
-            onClick={() => createRiveInstance("Upper B - Friday")}
+            onClick={() => createRiveInstance("Upper D - Friday")}
             className={`text-xs w-full ${
               daySelected === "Friday" ? "bg-slate-200" : "bg-slate-100"
             } rounded-none text-black uppercase hover:bg-slate-300`}
